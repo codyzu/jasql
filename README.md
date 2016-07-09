@@ -17,6 +17,23 @@ Enterprises often have DBA's and contracts for using one of the big database nam
 Until now, node.js support for the big relational databases was very limited.
 That time is over... jasql lets you continue focusing on functionality and keeps the dirty SQL details out of your way.
 
+# Usage
+
+```javascript
+const Jasql = require('jasql')
+
+const jasql = new Jasql()
+
+jasql.initialize()
+  .then(() => jasql.create({
+      _id: 'artist/Claude Francois/album/Best Of',
+      country: 'France',
+      year: 1970
+    }))
+  .then(() => jasql.list('artist/%'))
+  .then((artists) => console.log(artists))
+```
+
 # Indexes
 
 By default, jasql supports a single indexed field names `_id`.
