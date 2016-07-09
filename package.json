@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "standard | snazzy",
     "_test": "tape -r babel-core/register \"test/test*.js\" | tap-diff",
-    "test": "NODE_ENV=test npm run lint && nyc npm run _test",
+    "test": "npm run lint && NODE_ENV=test nyc -i babel-core/babel-register npm run _test",
     "dev": "nodemon -w lib -w test -x npm test",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
@@ -20,7 +20,6 @@
     "env": {
       "test": {
         "plugins": [
-          "transform-async-to-generator",
           "istanbul"
         ]
       }
