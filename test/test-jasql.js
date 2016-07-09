@@ -1,25 +1,30 @@
 import test from 'blue-tape'
-import Jasql from '../lib'
+import Jasql, {DocumentNotFoundError} from '../lib'
 import {isValid} from 'shortid'
 
 const jasql = new Jasql()
 
-const doc = {
-  name: 'cody'
-}
-
 test('setup', (t) => jasql.initialize())
 
-test('create returns the created document with an added _id', (t) =>
-  jasql.create(doc)
-  .then((actualDoc) => {
-    console.log('NEW DOC:', actualDoc)
-    t.ok(actualDoc.name === doc.name, 'has the name set')
-    t.ok(actualDoc._id, 'has _id set')
-    t.ok(isValid(actualDoc._id), '_id is a valid shortid')
-  }))
+test('create returns the created document with an added _id', (t) => {
+  const doc = {
+    name: 'cody'
+  }
+
+  return jasql.create(doc)
+    .then((actualDoc) => {
+      console.log('NEW DOC:', actualDoc)
+      t.ok(actualDoc.name === doc.name, 'has the name set')
+      t.ok(actualDoc._id, 'has _id set')
+      t.ok(isValid(actualDoc._id), '_id is a valid shortid')
+    })
+})
 
 test('read returns document by id', (t) => {
+  const doc = {
+    name: 'cody'
+  }
+
   let id
 
   return jasql
@@ -36,14 +41,30 @@ test('read returns document by id', (t) => {
     })
 })
 
+test('read rejects if the document does not exist', (t) => {
+  return deleteAllRows()
+    .then(() => jasql.read('does not exist'))
+    .then(
+      () => test.fail('expected error did not occur'),
+      (err) => {
+        if (!err instanceof DocumentNotFoundError) {
+          throw err
+        }
+      })
+})
+
 test('list returns all documents', (t) => {
+  const doc1 = {
+    name: 'cody'
+  }
+
   const doc2 = {
     name: 'brian'
   }
 
   return deleteAllRows()
     .then((res) => console.log('DELETE RES', res))
-    .then(() => jasql.create(doc))
+    .then(() => jasql.create(doc1))
     .then(() => jasql.create(doc2))
     .then(() => jasql.list())
     .then((docs) => {
@@ -53,7 +74,7 @@ test('list returns all documents', (t) => {
     })
 })
 
-test('list can uses wildcards', (t) => {
+test('list can use wildcards', (t) => {
   const doc1 = {
     _id: 'a1'
   }
@@ -106,6 +127,10 @@ test('del removes document', (t) => {
 })
 
 test('update returns updated document', (t) => {
+  const doc = {
+    name: 'cody'
+  }
+
   return jasql.create(doc)
     .then((doc) => {
       doc.name = 'brian'
@@ -117,6 +142,10 @@ test('update returns updated document', (t) => {
 })
 
 test('update modifies document', (t) => {
+  const doc = {
+    name: 'cody'
+  }
+
   let id
 
   return jasql.create(doc)
