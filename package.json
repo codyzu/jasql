@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "lint": "standard | snazzy",
-    "_test": "tape -r babel-register \"test/test*.js\" | tap-diff",
-    "test": "npm run lint && nyc --require babel-core/register npm run _test",
+    "_test": "tape -r babel-core/register \"test/test*.js\" | tap-diff",
+    "test": "NODE_ENV=test npm run lint && nyc npm run _test",
     "dev": "nodemon -w lib -w test -x npm test",
-    "travis": "npm run test && nyc report --reporter=text-lcov | coveralls"
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "babel": {
     "presets": [
@@ -16,7 +16,25 @@
     ],
     "plugins": [
       "transform-async-to-generator"
-    ]
+    ],
+    "env": {
+      "test": {
+        "plugins": [
+          "transform-async-to-generator",
+          "istanbul"
+        ]
+      }
+    }
+  },
+  "nyc": {
+    "include": [
+      "lib/*.js"
+    ],
+    "require": [
+      "babel-register"
+    ],
+    "sourceMap": false,
+    "instrument": false
   },
   "standard": {
     "parser": "babel-eslint"
@@ -36,6 +54,7 @@
   },
   "homepage": "https://github.com/codyzu/jasql#readme",
   "devDependencies": {
+    "babel-plugin-istanbul": "^1.0.3",
     "blue-tape": "^0.2.0",
     "coveralls": "^2.11.9",
     "faucet": "0.0.1",
