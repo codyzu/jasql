@@ -1,8 +1,6 @@
-# jasql
+# jasql - JSON document storage in SQL for node.js
 
-## ![jasql](resources/logo-200px.png) JSON document storage in SQL for node.js
-
-## node.js + JSON + SQL = bliss
+## ![jasql](resources/logo-200px.png) node.js + JSON + SQL = bliss
 
 jasql is a node.js storage library for storing schemaless documents in various relational databases.
 
