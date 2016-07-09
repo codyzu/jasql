@@ -40,14 +40,72 @@ test('getAll returns all documents', (t) => {
     name: 'brian'
   }
 
-  return jasql.put(doc)
+  return deleteAllRows()
+    .then((res) => console.log('DELETE RES', res))
+    .then(() => jasql.put(doc))
     .then(() => jasql.put(doc2))
     .then(() => jasql.getAll())
     .then((docs) => {
       console.log('DOCS:', docs)
       t.ok(Array.isArray(docs), 'the results is an array')
-      t.ok(docs.length >= 2, 'there are at least 2 docs')
+      t.equal(docs.length, 2, 'there is exactly 2 docs')
+    })
+})
+
+test('getAll can uses wildcards', (t) => {
+  const doc1 = {
+    _id: 'a1'
+  }
+
+  const doc2 = {
+    _id: 'a2'
+  }
+
+  const doc3 = {
+    _id: 'b1'
+  }
+
+  return deleteAllRows()
+    .then(() => jasql.put(doc1))
+    .then(() => jasql.put(doc2))
+    .then(() => jasql.put(doc3))
+    .then(() => jasql.getAll({_id: 'a%'}))
+    .then((docs) => {
+      console.log('DOCS:', docs)
+      t.ok(Array.isArray(docs), 'the results is an array')
+      t.equal(docs.length, 2, 'there is exactly 2 docs')
+    })
+})
+
+test('delete removes document', (t) => {
+  const doc1 = {
+    _id: 'a1'
+  }
+
+  const doc2 = {
+    _id: 'a2'
+  }
+
+  const doc3 = {
+    _id: 'b1'
+  }
+
+  return deleteAllRows()
+    .then(() => jasql.put(doc1))
+    .then(() => jasql.put(doc2))
+    .then(() => jasql.put(doc3))
+    .then((doc) => jasql.get(doc._id))
+    .then((doc) => jasql.del(doc))
+    .then((count) => t.equal(count, 1))
+    .then(() => jasql.getAll())
+    .then((docs) => {
+      console.log('DOCS:', docs)
+      t.equal(docs.length, 2, 'there is exactly 2 docs')
     })
 })
 
 test('teardown', (t) => jasql.destroy())
+
+function deleteAllRows () {
+  return jasql.db(jasql.name).del()
+}
