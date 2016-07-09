@@ -2,6 +2,8 @@
 
 ## ![jasql](resources/logo-200px.png) node.js + JSON + SQL = bliss
 
+[![Build Status](https://travis-ci.org/codyzu/jasql.svg?branch=master)](https://travis-ci.org/codyzu/jasql)
+
 jasql is a node.js storage library for storing schemaless documents in various relational databases.
 Built on knex, jasql supports sqlite3, ~~postgre~~, ~~mysql~~, ~~oracle~~, and ~~mssql~~.
 The API is heavily inspired by pouchdb and is intuitive and designed to be rapidly used in applications exporting REST APIs.
