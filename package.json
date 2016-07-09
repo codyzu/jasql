@@ -36,11 +36,12 @@
   "homepage": "https://github.com/codyzu/jasql#readme",
   "devDependencies": {
     "blue-tape": "^0.2.0",
+    "faucet": "0.0.1",
     "nodemon": "^1.9.2",
     "nyc": "^7.0.0",
     "snazzy": "^4.0.0",
     "standard": "^7.1.2",
-    "tap-spec": "^4.1.1",
+    "tap-diff": "^0.1.1",
     "tape": "^4.6.0"
   },
   "dependencies": {
@@ -50,10 +51,9 @@
     "babel-plugin-transform-async-to-generator": "^6.8.0",
     "babel-preset-es2016-node5": "^1.1.2",
     "babel-register": "^6.9.0",
-    "faucet": "0.0.1",
+    "knex": "^0.11.7",
     "lodash": "^4.13.1",
     "shortid": "^2.2.6",
-    "sqlite3": "^3.1.4",
-    "tap-diff": "^0.1.1"
+    "sqlite3": "^3.1.4"
   }
 }
