@@ -1,5 +1,5 @@
 import test from 'blue-tape'
-import Jasql, {DocumentNotFoundError} from '../lib'
+import Jasql, {DocumentNotFoundError, DatabaseError} from '../lib'
 import {isValid} from 'shortid'
 
 const jasql = new Jasql()
@@ -13,11 +13,24 @@ test('create returns the created document with an added _id', (t) => {
 
   return jasql.create(doc)
     .then((actualDoc) => {
-      console.log('NEW DOC:', actualDoc)
       t.ok(actualDoc.name === doc.name, 'has the name set')
       t.ok(actualDoc._id, 'has _id set')
       t.ok(isValid(actualDoc._id), '_id is a valid shortid')
     })
+})
+
+test('creating document with existing id rejects', (t) => {
+  const doc = {
+    name: 'cody',
+    _id: 'cody'
+  }
+
+  return deleteAllRows()
+    .then(() => jasql.create(doc))
+    .then(() => jasql.create(doc))
+    .then(
+      () => t.fail('expected database error did not occur'),
+      (err) => t.ok(err instanceof DatabaseError, 'error is database'))
 })
 
 test('read returns document by id', (t) => {
@@ -29,10 +42,6 @@ test('read returns document by id', (t) => {
 
   return jasql
     .create(doc)
-    .then((d) => {
-      console.log('CREATED DOC', d)
-      return d
-    })
     .then((actualDoc) => { id = actualDoc._id })
     .then(() => jasql.read(id))
     .then((actualDoc) => {
@@ -45,12 +54,8 @@ test('read rejects if the document does not exist', (t) => {
   return deleteAllRows()
     .then(() => jasql.read('does not exist'))
     .then(
-      () => test.fail('expected error did not occur'),
-      (err) => {
-        if (!err instanceof DocumentNotFoundError) {
-          throw err
-        }
-      })
+      () => t.fail('expected document not found error did not occur'),
+      (err) => t.ok(err instanceof DocumentNotFoundError, 'error is document not found'))
 })
 
 test('list returns all documents', (t) => {
@@ -63,12 +68,10 @@ test('list returns all documents', (t) => {
   }
 
   return deleteAllRows()
-    .then((res) => console.log('DELETE RES', res))
     .then(() => jasql.create(doc1))
     .then(() => jasql.create(doc2))
     .then(() => jasql.list())
     .then((docs) => {
-      console.log('DOCS:', docs)
       t.ok(Array.isArray(docs), 'the results is an array')
       t.equal(docs.length, 2, 'there is exactly 2 docs')
     })
@@ -93,7 +96,6 @@ test('list can use wildcards', (t) => {
     .then(() => jasql.create(doc3))
     .then(() => jasql.list({_id: 'a%'}))
     .then((docs) => {
-      console.log('DOCS:', docs)
       t.ok(Array.isArray(docs), 'the results is an array')
       t.equal(docs.length, 2, 'there is exactly 2 docs')
     })
@@ -121,7 +123,6 @@ test('del removes document', (t) => {
     .then((count) => t.equal(count, 1))
     .then(() => jasql.list())
     .then((docs) => {
-      console.log('DOCS:', docs)
       t.equal(docs.length, 2, 'there is exactly 2 docs')
     })
 })
@@ -151,13 +152,11 @@ test('update modifies document', (t) => {
   return jasql.create(doc)
     .then((doc) => {
       id = doc._id
-      console.log('DOC:', doc)
       doc.name = 'brian'
       return jasql.update(doc)
     })
     .then(() => jasql.read(id))
     .then((updatedDoc) => {
-      console.log('UPDATED DOC:', updatedDoc)
       t.equal(updatedDoc.name, 'brian', 'name is updated')
     })
 })
