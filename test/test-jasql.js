@@ -107,5 +107,5 @@ test('delete removes document', (t) => {
 test('teardown', (t) => jasql.destroy())
 
 function deleteAllRows () {
-  return jasql.db(jasql.name).del()
+  return jasql.db(jasql.tableName).del()
 }
