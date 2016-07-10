@@ -6,7 +6,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/codyzu/jasql/badge.svg?branch=master)](https://coveralls.io/github/codyzu/jasql?branch=master)
 
 jasql is a node.js storage library for storing schemaless documents in various relational databases.
-Built on knex, jasql supports sqlite3, ~~postgre~~, ~~mysql~~, ~~oracle~~, and ~~mssql~~.
+Built on knex, jasql supports sqlite3, postgres, ~~mysql~~, ~~oracle~~, and ~~mssql~~.
 The API is heavily inspired by pouchdb and is intuitive and designed to be rapidly used in applications exporting REST APIs.
 
 _support for the missing databases above is coming soon!_
@@ -105,11 +105,61 @@ Prefix your ids with the type of the document. This makes retrieving all documen
 
 The Jasql class has a simple to use api.
 
-### Jasql constructor
+### constructor
 
-`opts`
+The constructor accepts an opts parameter.
+
+| name | type | description |
+|------|------|-------------|
+| opts | object | [optional] |
+| opts.db | object | knex connection object |
+| opts.tableName | string | table to use to store jasql document, default `JASQL` |
+| opts.id | string | name of the id field for documents, default `_id` |
+
+`opts.db` is passed to the initializer of knex.
+See the [knex documentation](http://knexjs.org/#Installation-client) for details.
+Below are some examples:
+
+jasql with **Sqlite3**:
+```javascript
+const jasql = new Jasql({
+  db: {
+    client: 'sqlite3',
+    connection: {
+      filename: 'path/to/db.sqlite'
+    }
+  }
+})
+```
+
+jasql with **Postres**:
+```javascript
+const jasql = new Jasql({
+  db: {
+    client: 'pg',
+    connection: {
+      host: 'localhost',
+      user: 'postgres',
+      database: 'postgres'
+    }
+  }
+})
+```
 
 ### initialize
+
+Initialize a Jasql instance, connecting to the database and creating the table if it does not exist.
+
+| name | type | description |
+|------|------|-------------|
+| {return} | Promise | returns a promise |
+
+Initialize should be called before executing any other methods on an instance of Jasql.
+
+```javascript
+jasql.initialize()
+  .then(() => console.log('jasql is ready to rock!'))
+```
 
 ### create
 
