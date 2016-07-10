@@ -3,4 +3,6 @@
 
 .nyc_output
 coverage
-  
+vendor
+_site
+.bundle
