@@ -2,10 +2,29 @@ import test from 'blue-tape'
 import Jasql from '../src'
 import {DocumentNotFoundError, DatabaseError} from '../src/errors'
 import {isValid} from 'shortid'
+import mkdir from 'mkdirp-promise'
+import {dirname} from 'path'
+import {promise as del} from 'delete'
 
-const jasql = new Jasql()
+const TEST_DATABASE = 'target/test.sqlite'
+const JASQL_OPTIONS = {
+  db: {
+    client: 'sqlite3',
+    connection: {
+      filename: TEST_DATABASE
+    }
+  }
+}
 
-test('setup', (t) => jasql.initialize())
+let jasql
+
+test('setup', (t) => {
+  return mkdir(dirname(TEST_DATABASE))
+    .then(() => {
+      jasql = new Jasql(JASQL_OPTIONS)
+    })
+    .then(() => jasql.initialize())
+})
 
 test('create returns the created document with an added _id', (t) => {
   const doc = {
@@ -160,6 +179,16 @@ test('update modifies document', (t) => {
     .then((updatedDoc) => {
       t.equal(updatedDoc.name, 'brian', 'name is updated')
     })
+})
+
+test('initialize creates the table if it does not exist', (t) => {
+  return jasql.destroy()
+    .then(() => del(TEST_DATABASE))
+    .then(() => {
+      jasql = new Jasql(JASQL_OPTIONS)
+    })
+    .then(() => jasql.initialize())
+    .then(() => t.pass('sucessfully re-initialize'))
 })
 
 test('teardown', (t) => jasql.destroy())
