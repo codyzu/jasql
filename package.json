@@ -7,7 +7,7 @@
     "lint": "standard \"src/*.js\" \"test/*.js\" | snazzy",
     "_test": "tape -r babel-core/register \"test/test*.js\" | tap-diff",
     "test": "npm run lint && NODE_ENV=test nyc npm run _test",
-    "dev": "nodemon -w lib -w test -x npm test",
+    "dev": "nodemon -w src -w test -x npm test",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "build": "babel src --out-dir lib",
     "prepublish": "npm run build"

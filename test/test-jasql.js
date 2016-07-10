@@ -114,10 +114,60 @@ test('list can use wildcards', (t) => {
     .then(() => jasql.create(doc1))
     .then(() => jasql.create(doc2))
     .then(() => jasql.create(doc3))
-    .then(() => jasql.list({_id: 'a%'}))
+    .then(() => jasql.list({id: 'a%'}))
     .then((docs) => {
       t.ok(Array.isArray(docs), 'the results is an array')
       t.equal(docs.length, 2, 'there is exactly 2 docs')
+    })
+})
+
+test('list sorts ascending by default', (t) => {
+  const docA = {
+    _id: 'a'
+  }
+
+  const docC = {
+    _id: 'c'
+  }
+
+  const docB = {
+    _id: 'b'
+  }
+
+  return deleteAllRows()
+    .then(() => jasql.create(docA))
+    .then(() => jasql.create(docC))
+    .then(() => jasql.create(docB))
+    .then(() => jasql.list())
+    .then((docs) => {
+      t.equal(docs[0]._id, docA._id, 'docA at index 0')
+      t.equal(docs[1]._id, docB._id, 'docB at index 1')
+      t.equal(docs[2]._id, docC._id, 'docC at index 2')
+    })
+})
+
+test('list sorts descending if opts.desc is true', (t) => {
+  const docA = {
+    _id: 'a'
+  }
+
+  const docC = {
+    _id: 'c'
+  }
+
+  const docB = {
+    _id: 'b'
+  }
+
+  return deleteAllRows()
+    .then(() => jasql.create(docA))
+    .then(() => jasql.create(docC))
+    .then(() => jasql.create(docB))
+    .then(() => jasql.list({desc: true}))
+    .then((docs) => {
+      t.equal(docs[0]._id, docC._id, 'docC at index 0')
+      t.equal(docs[1]._id, docB._id, 'docB at index 1')
+      t.equal(docs[2]._id, docA._id, 'docA at index 2')
     })
 })
 

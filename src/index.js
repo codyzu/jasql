@@ -77,9 +77,14 @@ export default class Jasql {
       .select(this.jsonColName)
       .from(this.tableName)
 
-    if (opts && opts._id) {
-      query.where(this.idColName, 'like', opts._id)
+    // if an id is included, add the 'where like' clause
+    if (opts && opts.id) {
+      query.where(this.idColName, 'like', opts.id)
     }
+
+    // add the 'order by' clause
+    const desc = opts && opts.desc
+    query.orderBy(this.idColName, desc ? 'DESC' : 'ASC')
 
     return query
       .map((row) => JSON.parse(row.doc))
