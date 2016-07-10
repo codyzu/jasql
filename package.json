@@ -6,15 +6,18 @@
   "scripts": {
     "lint": "standard | snazzy",
     "_test": "tape -r babel-core/register \"test/test*.js\" | tap-diff",
-    "test": "npm run lint && NODE_ENV=test nyc -i babel-core/babel-register npm run _test",
+    "test": "npm run lint && NODE_ENV=test nyc npm run _test",
     "dev": "nodemon -w lib -w test -x npm test",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "build": "babel src --out-dir lib",
+    "prepublish": "npm run build"
   },
   "babel": {
     "presets": [
       "es2016-node5"
     ],
     "plugins": [
+      "add-module-exports",
       "transform-async-to-generator"
     ],
     "env": {
@@ -27,7 +30,7 @@
   },
   "nyc": {
     "include": [
-      "lib/*.js"
+      "src/*.js"
     ],
     "require": [
       "babel-register"
@@ -53,6 +56,7 @@
   },
   "homepage": "https://github.com/codyzu/jasql#readme",
   "devDependencies": {
+    "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-istanbul": "^1.0.3",
     "blue-tape": "^0.2.0",
     "coveralls": "^2.11.9",

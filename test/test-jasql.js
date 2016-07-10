@@ -1,5 +1,6 @@
 import test from 'blue-tape'
-import Jasql, {DocumentNotFoundError, DatabaseError} from '../lib'
+import Jasql from '../src'
+import {DocumentNotFoundError, DatabaseError} from '../src/errors'
 import {isValid} from 'shortid'
 
 const jasql = new Jasql()
