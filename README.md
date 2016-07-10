@@ -28,13 +28,44 @@ const Jasql = require('jasql')
 const jasql = new Jasql()
 
 jasql.initialize()
+
   .then(() => jasql.create({
-      _id: 'artist/Claude Francois/album/Best Of',
-      country: 'France',
-      year: 1970
-    }))
-  .then(() => jasql.list('artist/%'))
-  .then((artists) => console.log(artists))
+    _id: 'users/Cody',
+    name: 'Cody',
+    title: 'Software Engineer'
+  }))
+
+  .then(() => jasql.create({
+    _id: 'users/Brian',
+    name: 'Brian',
+    title: 'Quality Engineer'
+  }))
+
+  .then(() => jasql.create({
+    _id: 'posts/Cody/' + new Date().toJSON(),
+    title: 'How to use jasql',
+    body: 'See documentation at http://github.chom/codyzu/jasql'
+  }))
+
+  .then(() => jasql.create({
+    _id: 'posts/Cody/' + new Date().toJSON(),
+    title: 'Why we may have to use relational databases',
+    body: 'Often enterprises already have the expertise and infastructure for relational databases and we have no choice.'
+  }))
+
+  .then(() => jasql.read('users/Cody'))
+
+  .then((doc) => console.log('User Cody:', doc))
+
+  .then(() => jasql.list({_id: 'users/%'}))
+
+  .then((docs) => console.log('All users:', docs))
+
+  .then(() => jasql.list({_id: 'posts/Cody/%'}))
+
+  .then((docs) => console.log('All posts by Cody:', docs))
+
+  .then(() => jasql.destroy())
 ```
 
 # Indexes
