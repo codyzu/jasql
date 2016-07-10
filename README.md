@@ -112,7 +112,7 @@ The constructor accepts an opts parameter.
 | name | type | description |
 |------|------|-------------|
 | opts | object | [optional] |
-| opts.db | object | knex connection object |
+| opts.db | object | knex connection object, default sqlite3 using `jasql.sqlite` |
 | opts.tableName | string | table to use to store jasql document, default `JASQL` |
 | opts.id | string | name of the id field for documents, default `_id` |
 
@@ -120,7 +120,12 @@ The constructor accepts an opts parameter.
 See the [knex documentation](http://knexjs.org/#Installation-client) for details.
 Below are some examples:
 
-jasql with **Sqlite3**:
+jasql defaults, **Sqlite3** using `jasql.sqlite`:
+```javascript
+const jasql = new Jasql()
+```
+
+jasql with **Sqlite3** and custom database file:
 ```javascript
 const jasql = new Jasql({
   db: {
