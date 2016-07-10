@@ -14,7 +14,7 @@
   },
   "babel": {
     "presets": [
-      "es2016-node5"
+      "es2016-node4"
     ],
     "plugins": [
       "add-module-exports",
@@ -47,7 +47,8 @@
   },
   "keywords": [
     "json",
-    "sql"
+    "sql",
+    "sqlite"
   ],
   "author": "codyzu",
   "license": "MIT",
@@ -56,8 +57,14 @@
   },
   "homepage": "https://github.com/codyzu/jasql#readme",
   "devDependencies": {
+    "babel-cli": "^6.10.1",
+    "babel-core": "^6.10.4",
+    "babel-eslint": "^6.1.1",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-istanbul": "^1.0.3",
+    "babel-plugin-transform-async-to-generator": "^6.8.0",
+    "babel-preset-es2016-node4": "^6.0.1",
+    "babel-register": "^6.9.0",
     "blue-tape": "^0.2.0",
     "coveralls": "^2.11.9",
     "faucet": "0.0.1",
@@ -69,12 +76,6 @@
     "tape": "^4.6.0"
   },
   "dependencies": {
-    "babel-cli": "^6.10.1",
-    "babel-core": "^6.10.4",
-    "babel-eslint": "^6.1.1",
-    "babel-plugin-transform-async-to-generator": "^6.8.0",
-    "babel-preset-es2016-node5": "^1.1.2",
-    "babel-register": "^6.9.0",
     "knex": "^0.11.7",
     "lodash": "^4.13.1",
     "shortid": "^2.2.6",
