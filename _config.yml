@@ -26,3 +26,5 @@ google_api_key:
 
 # Build settings
 markdown: kramdown
+
+exclude: ['vendor/bundle']
