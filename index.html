@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Jasql by codyzu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Jasql</h1>
+      <h2 class="project-tagline">JSON document storage in SQL</h2>
+      <a href="https://github.com/codyzu/jasql" class="btn">View on GitHub</a>
+      <a href="https://github.com/codyzu/jasql/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/codyzu/jasql/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="jasql---json-document-storage-in-sql-for-nodejs" class="anchor" href="#jasql---json-document-storage-in-sql-for-nodejs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>jasql - JSON document storage in SQL for node.js</h1>
+
+<h2>
+<a id="-nodejs--json--sql--bliss" class="anchor" href="#-nodejs--json--sql--bliss" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><img src="https://raw.githubusercontent.com/codyzu/jasql/master/resources/logo-200px.png" alt="jasql"> node.js + JSON + SQL = bliss</h2>
+
+<p><a href="https://travis-ci.org/codyzu/jasql"><img src="https://travis-ci.org/codyzu/jasql.svg?branch=master" alt="Build Status"></a>
+<a href="https://coveralls.io/github/codyzu/jasql?branch=master"><img src="https://coveralls.io/repos/github/codyzu/jasql/badge.svg?branch=master" alt="Coverage Status"></a></p>
+
+<p>jasql is a node.js storage library for storing schemaless documents in various relational databases.
+Built on knex, jasql supports sqlite3, <del>postgre</del>, <del>mysql</del>, <del>oracle</del>, and <del>mssql</del>.
+The API is heavily inspired by pouchdb and is intuitive and designed to be rapidly used in applications exporting REST APIs.</p>
+
+<p><em>support for the missing databases above is coming soon!</em></p>
+
+<h1>
+<a id="motivation" class="anchor" href="#motivation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Motivation</h1>
+
+<p>Why not just used mongodb?</p>
+
+<p>Sometimes client and/or infastructure requirements simple don't allow us to choose any database we want.
+Enterprises often have DBA's and contracts for using one of the big database names.
+Until now, node.js support for the big relational databases was very limited.
+That time is over... jasql lets you continue focusing on functionality and keeps the dirty SQL details out of your way.</p>
+
+<h1>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h1>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">const</span> <span class="pl-c1">Jasql</span> <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>jasql<span class="pl-pds">'</span></span>)
+
+<span class="pl-k">const</span> <span class="pl-c1">jasql</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Jasql</span>()
+
+<span class="pl-smi">jasql</span>.<span class="pl-en">initialize</span>()
+
+  .<span class="pl-en">then</span>(() <span class="pl-k">=&gt;</span> <span class="pl-smi">jasql</span>.<span class="pl-en">create</span>({
+    _id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>users/Cody<span class="pl-pds">'</span></span>,
+    name<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Cody<span class="pl-pds">'</span></span>,
+    title<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Software Engineer<span class="pl-pds">'</span></span>
+  }))
+
+  .<span class="pl-en">then</span>(() <span class="pl-k">=&gt;</span> <span class="pl-smi">jasql</span>.<span class="pl-en">create</span>({
+    _id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>users/Brian<span class="pl-pds">'</span></span>,
+    name<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Brian<span class="pl-pds">'</span></span>,
+    title<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Quality Engineer<span class="pl-pds">'</span></span>
+  }))
+
+  .<span class="pl-en">then</span>(() <span class="pl-k">=&gt;</span> <span class="pl-smi">jasql</span>.<span class="pl-en">create</span>({
+    _id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>posts/Cody/<span class="pl-pds">'</span></span> <span class="pl-k">+</span> <span class="pl-k">new</span> <span class="pl-en">Date</span>().<span class="pl-en">toJSON</span>(),
+    title<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>How to use jasql<span class="pl-pds">'</span></span>,
+    body<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>See documentation at http://github.chom/codyzu/jasql<span class="pl-pds">'</span></span>
+  }))
+
+  .<span class="pl-en">then</span>(() <span class="pl-k">=&gt;</span> <span class="pl-smi">jasql</span>.<span class="pl-en">create</span>({
+    _id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>posts/Cody/<span class="pl-pds">'</span></span> <span class="pl-k">+</span> <span class="pl-k">new</span> <span class="pl-en">Date</span>().<span class="pl-en">toJSON</span>(),
+    title<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Why we may have to use relational databases<span class="pl-pds">'</span></span>,
+    body<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Often enterprises already have the expertise and infastructure for relational databases and we have no choice.<span class="pl-pds">'</span></span>
+  }))
+
+  .<span class="pl-en">then</span>(() <span class="pl-k">=&gt;</span> <span class="pl-smi">jasql</span>.<span class="pl-en">read</span>(<span class="pl-s"><span class="pl-pds">'</span>users/Cody<span class="pl-pds">'</span></span>))
+
+  .<span class="pl-en">then</span>((<span class="pl-smi">doc</span>) <span class="pl-k">=&gt;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">'</span>User Cody:<span class="pl-pds">'</span></span>, doc))
+
+  .<span class="pl-en">then</span>(() <span class="pl-k">=&gt;</span> <span class="pl-smi">jasql</span>.<span class="pl-en">list</span>({_id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>users/%<span class="pl-pds">'</span></span>}))
+
+  .<span class="pl-en">then</span>((<span class="pl-smi">docs</span>) <span class="pl-k">=&gt;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">'</span>All users:<span class="pl-pds">'</span></span>, docs))
+
+  .<span class="pl-en">then</span>(() <span class="pl-k">=&gt;</span> <span class="pl-smi">jasql</span>.<span class="pl-en">list</span>({_id<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>posts/Cody/%<span class="pl-pds">'</span></span>}))
+
+  .<span class="pl-en">then</span>((<span class="pl-smi">docs</span>) <span class="pl-k">=&gt;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">'</span>All posts by Cody:<span class="pl-pds">'</span></span>, docs))
+
+  .<span class="pl-en">then</span>(() <span class="pl-k">=&gt;</span> <span class="pl-smi">jasql</span>.<span class="pl-en">destroy</span>())</pre></div>
+
+<h1>
+<a id="indexes" class="anchor" href="#indexes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Indexes</h1>
+
+<p>By default, jasql supports a single indexed field names <code>_id</code>.
+This can be any string up to 255 characters.
+If you don't define this id, jasql will generate a nice random one for you.</p>
+
+<p>However, don't be limited by randow ids!
+Need documents sorted by date? Try storing the ISO date in the id.
+Prefix your ids with the type of the document. This makes retrieving all documents of a given type super easy.</p>
+
+<h1>
+<a id="roadmap" class="anchor" href="#roadmap" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Roadmap</h1>
+
+<ul>
+<li>implement missing db drivers</li>
+<li>add search functionality</li>
+<li>investigate improved indexing</li>
+</ul>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/codyzu/jasql">Jasql</a> is maintained by <a href="https://github.com/codyzu">codyzu</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
