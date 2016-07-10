@@ -27,9 +27,10 @@ const JASQL_OPTIONS_PG = {
   }
 }
 
-const JASQL_OPTIONS = JASQL_OPTIONS_PG
-
-test('sqlite3', (fixture) => testDb(fixture, JASQL_OPTIONS_SQLITE3))
+test('sqlite3', (fixture) => {
+  return mkdir(dirname(TEST_DATABASE))
+    .then(() => testDb(fixture, JASQL_OPTIONS_SQLITE3))
+})
 
 test('postgres', (fixture) => testDb(fixture, JASQL_OPTIONS_PG))
 
@@ -37,11 +38,8 @@ function testDb (dbFixture, opts) {
   let jasql
 
   dbFixture.test('setup', (t) => {
-    return mkdir(dirname(TEST_DATABASE))
-      .then(() => {
-        jasql = new Jasql(JASQL_OPTIONS)
-      })
-      .then(() => jasql.initialize())
+    jasql = new Jasql(opts)
+    return jasql.initialize()
   })
 
   dbFixture.test('create returns the created document with an added _id', (t) => {
@@ -261,7 +259,7 @@ function testDb (dbFixture, opts) {
     return jasql.db.schema.dropTable(jasql.tableName)
       .then(() => jasql.destroy())
       .then(() => {
-        jasql = new Jasql(JASQL_OPTIONS)
+        jasql = new Jasql(opts)
       })
       .then(() => jasql.initialize())
       .then(() => t.pass('sucessfully re-initialize'))
