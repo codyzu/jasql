@@ -7,27 +7,27 @@ import {dirname} from 'path'
 
 const TEST_DATABASE = 'target/test.sqlite'
 
-const JASQL_OPTIONS_SQLITE3 = {
-  db: {
-    client: 'sqlite3',
-    connection: {
-      filename: TEST_DATABASE
-    }
-  }
-}
-
-// const JASQL_OPTIONS_PG = {
+// const JASQL_OPTIONS_SQLITE3 = {
 //   db: {
-//     client: 'pg',
+//     client: 'sqlite3',
 //     connection: {
-//       host: 'localhost',
-//       user: 'postgres',
-//       database: 'postgres'
+//       filename: TEST_DATABASE
 //     }
 //   }
 // }
 
-const JASQL_OPTIONS = JASQL_OPTIONS_SQLITE3
+const JASQL_OPTIONS_PG = {
+  db: {
+    client: 'pg',
+    connection: {
+      host: 'localhost',
+      user: 'postgres',
+      database: 'postgres'
+    }
+  }
+}
+
+const JASQL_OPTIONS = JASQL_OPTIONS_PG
 
 let jasql
 
