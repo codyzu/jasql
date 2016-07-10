@@ -22,18 +22,27 @@ That time is over... jasql lets you continue focusing on functionality and keeps
 
 # Usage
 
+### 1. Import and initialize jasql
+
 ```javascript
 const Jasql = require('jasql')
 
 const jasql = new Jasql()
 
-jasql.initialize()
+  jasql.initialize()
+  
+  .then(() => console.log('jasql is ready to work!'))
+```
 
-  .then(() => jasql.create({
+### 2. Add some documents
+
+```javascript
+  // first create 2 users
+  jasql.create({
     _id: 'users/Cody',
     name: 'Cody',
     title: 'Software Engineer'
-  }))
+  })
 
   .then(() => jasql.create({
     _id: 'users/Brian',
@@ -41,6 +50,7 @@ jasql.initialize()
     title: 'Quality Engineer'
   }))
 
+  // next create 2 posts
   .then(() => jasql.create({
     _id: 'posts/Cody/' + new Date().toJSON(),
     title: 'How to use jasql',
@@ -52,20 +62,33 @@ jasql.initialize()
     title: 'Why we may have to use relational databases',
     body: 'Often enterprises already have the expertise and infastructure for relational databases and we have no choice.'
   }))
+```
 
-  .then(() => jasql.read('users/Cody'))
+### 3. Read a stored documents
+
+```javascript
+  jasql.read('users/Cody')
 
   .then((doc) => console.log('User Cody:', doc))
+```
 
-  .then(() => jasql.list({_id: 'users/%'}))
+### 4. List documents, using wildcards
+
+```javascript
+  jasql.list({_id: 'users/%'})
 
   .then((docs) => console.log('All users:', docs))
 
   .then(() => jasql.list({_id: 'posts/Cody/%'}))
 
   .then((docs) => console.log('All posts by Cody:', docs))
+```
 
-  .then(() => jasql.destroy())
+### 5. Don't forget to cleanup if you want to application to exit
+```javascript
+  jasql.destroy()
+
+  .then(() => console.log('jasql is disconnected'))
 ```
 
 # Indexes
