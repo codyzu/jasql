@@ -137,7 +137,7 @@ const jasql = new Jasql({
 })
 ```
 
-jasql with **Postres**:
+jasql with **Postgres**:
 ```javascript
 const jasql = new Jasql({
   db: {
