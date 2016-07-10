@@ -4,3 +4,8 @@ node_js:
   - 5
   - 4
 after_success: npm run coverage
+services:
+  - postgresql
+
+addons:
+  postgresql: "9.4"
