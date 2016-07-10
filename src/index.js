@@ -17,12 +17,13 @@ const DEFAULT_OPTIONS = {
 export default class Jasql {
   constructor (opts) {
     let options = defaults({}, opts, DEFAULT_OPTIONS)
+    this.dbOptions = options.db
     this.db = knex(options.db)
     this.tableName = options.tableName
     this.id = options.idName
     this.jsonColName = 'doc'
     this.idColName = 'id'
-    this.jsonColType = 'clob'
+    this.jsonColType = getJsonType(options.db)
   }
 
   initialize () {
@@ -59,7 +60,7 @@ export default class Jasql {
       .select(this.jsonColName)
       .from(this.tableName)
       .where({id: id})
-      .map((row) => JSON.parse(row.doc))
+      .map((row) => this._rowToDocument(row))
       .then(
         (rows) => {
           if (rows.length < 1) {
@@ -87,7 +88,7 @@ export default class Jasql {
     query.orderBy(this.idColName, desc ? 'DESC' : 'ASC')
 
     return query
-      .map((row) => JSON.parse(row.doc))
+      .map((row) => this._rowToDocument(row))
       .catch(handleDbError)
   }
 
@@ -119,6 +120,18 @@ export default class Jasql {
       .destroy()
       .catch(handleDbError)
   }
+
+  _rowToDocument (row) {
+    if (this._isPostgres()) {
+      return row[this.jsonColName]
+    }
+
+    return JSON.parse(row[this.jsonColName])
+  }
+
+  _isPostgres () {
+    return this.dbOptions.client === 'pg'
+  }
 }
 
 function handleDbError (err) {
@@ -126,6 +139,14 @@ function handleDbError (err) {
 }
 
 function tableSchema (table, jasql) {
-  table.string(jasql.idColName, 255).index().unique()
+  table.string(jasql.idColName, 255).index().unique().primary()
   table.specificType(jasql.jsonColName, jasql.jsonColType)
+}
+
+function getJsonType (dbOptions) {
+  if (dbOptions.client === 'pg') {
+    return 'jsonb'
+  }
+
+  return 'clob'
 }

@@ -4,10 +4,10 @@ import {DocumentNotFoundError, DatabaseError} from '../src/errors'
 import {isValid} from 'shortid'
 import mkdir from 'mkdirp-promise'
 import {dirname} from 'path'
-import {promise as del} from 'delete'
 
 const TEST_DATABASE = 'target/test.sqlite'
-const JASQL_OPTIONS = {
+
+const JASQL_OPTIONS_SQLITE3 = {
   db: {
     client: 'sqlite3',
     connection: {
@@ -15,6 +15,19 @@ const JASQL_OPTIONS = {
     }
   }
 }
+
+// const JASQL_OPTIONS_PG = {
+//   db: {
+//     client: 'pg',
+//     connection: {
+//       host: 'localhost',
+//       user: 'postgres',
+//       database: 'postgres'
+//     }
+//   }
+// }
+
+const JASQL_OPTIONS = JASQL_OPTIONS_SQLITE3
 
 let jasql
 
@@ -62,8 +75,16 @@ test('read returns document by id', (t) => {
 
   return jasql
     .create(doc)
+    .catch((err) => {
+      console.log('ERROR CREATE:', err)
+      throw err
+    })
     .then((actualDoc) => { id = actualDoc._id })
     .then(() => jasql.read(id))
+    .catch((err) => {
+      console.log('ERROR READ:', err)
+      throw err
+    })
     .then((actualDoc) => {
       t.equal(actualDoc.name, doc.name, 'has the correct name')
       t.equal(actualDoc._id, id, 'has the correct id')
@@ -232,8 +253,8 @@ test('update modifies document', (t) => {
 })
 
 test('initialize creates the table if it does not exist', (t) => {
-  return jasql.destroy()
-    .then(() => del(TEST_DATABASE))
+  return jasql.db.schema.dropTable(jasql.tableName)
+    .then(() => jasql.destroy())
     .then(() => {
       jasql = new Jasql(JASQL_OPTIONS)
     })
