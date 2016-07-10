@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 
+## [0.2.1] - 2015-07-11
+### Added
+- fix npmignore
+
 ## [0.2.0] - 2015-07-11
 ### Added
 - postgres support
