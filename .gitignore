@@ -49,4 +49,7 @@ jspm_packages
 # never commit compiled babel
 lib
 
+# Jekyll / ruby stuff
 _site
+vendor
+.bundle
