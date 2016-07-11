@@ -15,6 +15,8 @@ _support for the missing databases above is coming soon!_
 
 * [Quickstart](#quickstart)
 * [Ids and Indexes](#ids-and-indexes)
+* [Compatibility](#compatibility)
+* [Installation](#installation)
 * [Motivation (Why not mongodb)?](#motivation-why-not-mongodb)
 * [API Documentation](#api-documentation)
 * [Roadmap](#roadmap)
