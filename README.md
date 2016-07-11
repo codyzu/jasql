@@ -11,30 +11,34 @@ The API is heavily inspired by pouchdb and is intuitive and designed to be rapid
 
 _support for the missing databases above is coming soon!_
 
-# Motivation
+# Table of Contents
 
-Why not just used mongodb?
+* [Quickstart](#quickstart)
+* [Ids and Indexes](#ids-and-indexes)
+* [Motivation (Why not mongodb)?](#motivation-why-not-mongodb)
+* [API Documentation](#api-documentation)
+* [Roadmap](#roadmap)
 
-Sometimes client and/or infastructure requirements simple don't allow us to choose any database we want.
-Enterprises often have DBA's and contracts for using one of the big database names.
-Until now, node.js support for the big relational databases was very limited.
-That time is over... jasql lets you continue focusing on functionality and keeps the dirty SQL details out of your way.
 
-# Usage
+# Quickstart
 
-### 1. Import and initialize jasql
+### 1. Install jasql:
+
+```
+npm install jasql
+```
+
+### 2. Import and initialize jasql
 
 ```javascript
 const Jasql = require('jasql')
-
 const jasql = new Jasql()
 
-  jasql.initialize()
-  
+jasql.initialize()
   .then(() => console.log('jasql is ready to work!'))
 ```
 
-### 2. Add some documents
+### 3. Add some documents
 
 ```javascript
   // first create 2 users
@@ -60,11 +64,11 @@ const jasql = new Jasql()
   .then(() => jasql.create({
     _id: 'posts/Cody/' + new Date().toJSON(),
     title: 'Why we may have to use relational databases',
-    body: 'Often enterprises already have the expertise and infastructure for relational databases and we have no choice.'
+    body: 'Often enterprises already have the expertise and infrastructure for relational databases and we have no choice.'
   }))
 ```
 
-### 3. Read a stored document by id
+### 4. Read a stored document by id
 
 ```javascript
   jasql.read('users/Cody')
@@ -72,7 +76,7 @@ const jasql = new Jasql()
   .then((doc) => console.log('User Cody:', doc))
 ```
 
-### 4. List documents, using wildcards
+### 5. List documents, using wildcards
 
 ```javascript
   jasql.list({_id: 'users/%'})
@@ -81,25 +85,47 @@ const jasql = new Jasql()
 
   .then(() => jasql.list({_id: 'posts/Cody/%'}))
 
+  // posts will be in cronological order
+  // because they have the date in the id!
   .then((docs) => console.log('All posts by Cody:', docs))
 ```
 
-### 5. Don't forget to cleanup if you want to application to exit
+### 6. Disconnect if needed
+
+Don't forget to cleanup if you want to application to exit cleanly. This isn't required for long running server applications, but may be useful if your tests seem to "hang".
 ```javascript
   jasql.destroy()
 
   .then(() => console.log('jasql is disconnected'))
 ```
 
+
 # Ids and Indexes
 
-By default, jasql supports a single indexed field names `_id`.
+By default, jasql supports a single indexed field named `_id`.
 This can be any string up to 255 characters.
 If you don't define this id, jasql will generate a nice random one for you.
 
-However, don't be limited by randow ids!
+However, don't be limited by random ids!
 Need documents sorted by date? Try storing the ISO date in the id.
 Prefix your ids with the type of the document. This makes retrieving all documents of a given type super easy.
+
+
+# Compatibility
+
+jasql is tested and verified on the latest releases of **Node v4, v5, and v6**. If you need to support another version of node, create an issue or even better a pull request!
+
+
+# Motivation (why not mongodb?)
+
+Why not just used mongodb?
+
+Sometimes client and/or infrastructure requirements simple don't allow us to choose any database we want.
+Enterprises often have DB Admins, contracts, infrastructure, and proven expertise in one of the big database names.
+Until now, node.js support for the big relational databases was very limited.
+That time is over...
+**jasql lets you continue focusing on functionality and keeps the dirty SQL details out of your way!**
+
 
 # API Documentation
 
@@ -200,7 +226,7 @@ Read an existing document from the database.
 | {return} | Promise | returns a promise resolving to the read document |
 
 The id must refer to an existing document.
-An error will be raised if a document with the given id does not exist. 
+An error will be raised if a document with the given id does not exist.
 
 Read a document with id `users/Cody`:
 ```javascript
