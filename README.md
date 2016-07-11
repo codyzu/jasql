@@ -79,13 +79,13 @@ jasql.initialize()
 ### 5. List documents, using wildcards
 
 ```javascript
-  jasql.list({_id: 'users/%'})
+  jasql.list({id: 'users/%'})
 
   .then((docs) => console.log('All users:', docs))
 
   .then(() => jasql.list({_id: 'posts/Cody/%'}))
 
-  // posts will be in cronological order
+  // posts will be in chronological order
   // because they have the date in the id!
   .then((docs) => console.log('All posts by Cody:', docs))
 ```
@@ -106,9 +106,11 @@ By default, jasql supports a single indexed field named `_id`.
 This can be any string up to 255 characters.
 If you don't define this id, jasql will generate a nice random one for you.
 
-However, don't be limited by random ids!
-Need documents sorted by date? Try storing the ISO date in the id.
-Prefix your ids with the type of the document. This makes retrieving all documents of a given type super easy.
+However, **don't be limited by random ids!**
+
+:bulb: Prefix your ids with the type of the document, i.e. `users/Cody`. This makes retrieving all documents of a given type super easy `jasql.list({id:'users/%'})`.
+
+:bulb: Need documents sorted by date? Try using `new Date().toJSON()` in the id. When you list them, they will be sorted chronologically!
 
 
 # Compatibility
@@ -300,7 +302,7 @@ jasql.list()
 
 List all documents with ids starting with `users/`:
 ```javascript
-jasql.list('users/%')
+jasql.list({id:'users/%'})
 ```
 
 # Roadmap
