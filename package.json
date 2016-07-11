@@ -1,6 +1,6 @@
 {
   "name": "jasql",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "JSON document storage in SQL",
   "main": "lib/index.js",
   "scripts": {
