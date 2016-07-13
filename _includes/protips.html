@@ -1,0 +1,11 @@
+<aside class="callout protips" id="protips">
+  <div class="text-vertical-center">
+    <h1>Pro Tips</h1>
+  </div>
+</aside>
+<div class="container">
+  <div class="col-md-12">
+    {% capture my-include %}{% include protips.md %}{% endcapture %}
+    {{ my-include | markdownify }}
+  </div>
+</div>

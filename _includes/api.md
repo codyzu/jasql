@@ -4,7 +4,7 @@ The Jasql class has a simple to use api.
 
 ---
 
-## `constructor`
+## `constructor(opts)`
 
 The constructor accepts an opts parameter.
 
@@ -75,7 +75,7 @@ const jasql = new Jasql({
 
 ---
 
-## `initialize`
+## `initialize()`
 
 #### Initialize a Jasql instance, connecting to the database and creating the table if it does not exist.
 
@@ -105,7 +105,7 @@ jasql.initialize()
 
 ---
 
-## `create`
+## `create(doc)`
 
 #### Creat a new document in the database.
 
@@ -146,7 +146,7 @@ _see [Ids and Indexes](#ids-and-indexes) for more details about ids_
 
 ---
 
-## `read`
+## `read(id)`
 
 #### Read an existing document from the database.
 
@@ -183,7 +183,7 @@ jasql.read('users/Cody')
 
 ---
 
-## `update`
+## `update(doc)`
 
 #### Update an existing document.
 
@@ -225,7 +225,7 @@ jasql.read('users/Cody')
 ---
 
 
-## `list`
+## `list(opts)`
 
 #### Lists some or all documents in the database.
 
@@ -275,7 +275,7 @@ jasql.list({id:'users/%'})
 
 ---
 
-## `del`
+## `del(idOrDoc)`
 
 #### Delete a document from the database.
 
@@ -319,7 +319,7 @@ jasql.read('users/Cody')
 
 ---
 
-## `destroy`
+## `destroy()`
 
 #### Closes any open connections to the database
 
