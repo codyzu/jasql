@@ -5,7 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 
-## [0.2.2]
+## [0.3.1] - 2015-07-13
+### Added
+- website live
+- simplify readme to reference website
+
+## [0.3.0] - 2015-07-11
 ### Fix
 - documentation
 - make db dependencies optional
