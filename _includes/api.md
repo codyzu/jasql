@@ -1,6 +1,10 @@
+# Jasql class
+
 The Jasql class has a simple to use api.
 
-### constructor
+---
+
+## `constructor`
 
 The constructor accepts an opts parameter.
 
@@ -16,11 +20,13 @@ See the [knex documentation](http://knexjs.org/#Installation-client) for details
 Below are some examples:
 
 jasql defaults, **Sqlite3** using `jasql.sqlite`:
+
 ```javascript
 const jasql = new Jasql()
 ```
 
 jasql with **Sqlite3** and custom database file:
+
 ```javascript
 const jasql = new Jasql({
   db: {
@@ -33,6 +39,7 @@ const jasql = new Jasql({
 ```
 
 jasql with **Postgres**:
+
 ```javascript
 const jasql = new Jasql({
   db: {
@@ -46,9 +53,11 @@ const jasql = new Jasql({
 })
 ```
 
-### initialize
+---
 
-Initialize a Jasql instance, connecting to the database and creating the table if it does not exist.
+## `initialize`
+
+#### Initialize a Jasql instance, connecting to the database and creating the table if it does not exist.
 
 | name | type | description |
 |------|------|-------------|
@@ -61,9 +70,11 @@ jasql.initialize()
   .then(() => console.log('jasql is ready to rock!'))
 ```
 
-### create
+---
 
-Creat a new document in the database.
+## `create`
+
+#### Creat a new document in the database.
 
 | name | type | description |
 |------|------|-------------|
@@ -85,9 +96,11 @@ jasql.create({ _id: 'users/Cody', name: 'Cody', title: 'Software Engineer' })
 
 _see [Ids and Indexes](#ids-and-indexes) for more details about ids_
 
-### read
+---
 
-Read an existing document from the database.
+## `read`
+
+#### Read an existing document from the database.
 
 | name | type | description |
 |------|------|-------------|
@@ -98,13 +111,16 @@ The id must refer to an existing document.
 An error will be raised if a document with the given id does not exist.
 
 Read a document with id `users/Cody`:
+
 ```javascript
 jasql.read('users/Cody')
 ```
 
-### update
+---
 
-Update an existing document.
+## `update`
+
+#### Update an existing document.
 
 | name | type | description |
 |------|------|-------------|
@@ -116,6 +132,7 @@ The `doc` should have an `_id` of a document existing in the database.
 The existing document will be replaced with the new `doc`.
 
 Update a field in a document with id `users/Cody`:
+
 ```javascript
 jasql.read('users/Cody')
   .then((doc) => {
@@ -124,32 +141,12 @@ jasql.read('users/Cody')
   })
 ```
 
-### del
+---
 
-Delete a document from the database.
 
-| name | type | description |
-|------|------|-------------|
-| idOrDoc | string \| object | id of document or document to delete |
-| {return} | Promise | returns a promise |
+## `list`
 
-The document to delete can either be specified by its id, or by passing
-an object that has an `_id` field that matches an existing document.
-
-Delete a document by id:
-```javascript
-jasql.del('users/Cody')
-```
-
-Read and then delete a document:
-```javascript
-jasql.read('users/Cody')
-  .then((doc) => jasql.del(doc))
-```
-
-### list
-
-Lists some or all documents in the database
+#### Lists some or all documents in the database.
 
 | name | type | description |
 |------|------|-------------|
@@ -163,11 +160,59 @@ If called with an id (optionally with wildcards), all documents matching the id 
 _For a list of valid wildcards, see [sql wildcards](http://www.w3schools.com/sql/sql_wildcards.asp)._
 
 List all documents:
+
 ```javascript
 jasql.list()
 ```
 
 List all documents with ids starting with `users/`:
+
 ```javascript
 jasql.list({id:'users/%'})
 ```
+
+---
+
+## `del`
+
+#### Delete a document from the database.
+
+| name | type | description |
+|------|------|-------------|
+| idOrDoc | string \| object | id of document or document to delete |
+| {return} | Promise | returns a promise |
+
+The document to delete can either be specified by its id, or by passing
+an object that has an `_id` field that matches an existing document.
+
+Delete a document by id:
+
+```javascript
+jasql.del('users/Cody')
+```
+
+Read and then delete a document:
+
+```javascript
+jasql.read('users/Cody')
+  .then((doc) => jasql.del(doc))
+```
+
+---
+
+## `destroy`
+
+#### Closes any open connections to the database
+
+| name | type | description |
+|------|------|-------------|
+| _{return}_ | Promise | returns a promise resolving when all connections are closed |
+
+_Calling `destroy` is not required for long running server applications._
+However, it can be useful in your tests if they seem to "hang" do to open connections to the database.
+
+```javascript
+  jasql.destroy()
+```
+
+---
