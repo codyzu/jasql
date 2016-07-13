@@ -10,27 +10,6 @@ However, **don't be limited by random ids!**
 
 :bulb: Need documents sorted by date? Try using `new Date().toJSON()` in the id. When you list them, they will be sorted chronologically!
 
-
-# Compatibility
-
-jasql is tested and verified on the latest releases of **Node v4, v5, and v6**. If you need to support another version of node, create an issue or even better a pull request!
-
-
-# Installation
-
-Install using npm:
-```
-npm install jasql
-```
-
-**One of the supported database drivers should also installed!**
-
-* `sqlite3` for Sqlite3 support
-* `pg` for postres support
-
-:warning: The above dependencies are marked as optionalDependencies in the package.json. This means npm will try to install them all, and continue happily even if they fail. One is required, feel free to uninstall the dependencies ones you don't use.
-
-
 # Motivation (why not mongodb?)
 
 Why not just used mongodb?

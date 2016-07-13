@@ -8,6 +8,18 @@ jasql is [available on npm](https://www.npmjs.com/package/jasql) and is easy to 
 npm install jasql
 ```
 
+jasql is tested and verified on the latest releases of **Node v4, v5, and v6**.
+If you need to support another version of node, create an issue or even better a pull request!
+
+**One of the supported database drivers should also be installed!**
+
+* `sqlite3` for Sqlite3 support
+* `pg` for postres support
+
+:warning: The above dependencies are marked as optionalDependencies in the package.json.
+This means npm will try to install them all, and continue happily even if they fail.
+One is required, feel free to uninstall the dependencies ones you don't use.
+
 ### 2. Import and initialize jasql
 
 The jasql module exports a single class `Jasql`, we will need to instantiate and also initialize this class.
