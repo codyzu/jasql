@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 
+## [0.3.2] - 2015-07-13
+### Added
+- website link bold for visibility on npm
+
 ## [0.3.1] - 2015-07-13
 ### Added
 - website live
