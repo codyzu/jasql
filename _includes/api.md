@@ -8,12 +8,32 @@ The Jasql class has a simple to use api.
 
 The constructor accepts an opts parameter.
 
-| name | type | description |
-|------|------|-------------|
-| opts | object | [optional] |
-| opts.db | object | knex connection object, default sqlite3 using `jasql.sqlite` |
-| opts.tableName | string | table to use to store jasql document, default `JASQL` |
-| opts.id | string | name of the id field for documents, default `_id` |
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>name</th>
+      <th>type</th>
+      <th>description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>opts</td>
+      <td>object</td>
+      <td>[optional]</td>
+    </tr>
+    <tr>
+      <td>opts.db</td>
+      <td>object</td>
+      <td>knex connection object, default sqlite3 using <code class="highlighter-rouge">jasql.sqlite</code></td>
+    </tr>
+    <tr>
+      <td>opts.tableName</td>
+      <td>string</td>
+      <td>name of the id field for documents, default <code class="highlighter-rouge">_id</code></td>
+    </tr>
+  </tbody>
+</table>
 
 `opts.db` is passed to the initializer of knex.
 See the [knex documentation](http://knexjs.org/#Installation-client) for details.
@@ -59,9 +79,22 @@ const jasql = new Jasql({
 
 #### Initialize a Jasql instance, connecting to the database and creating the table if it does not exist.
 
-| name | type | description |
-|------|------|-------------|
-| {return} | Promise | returns a promise |
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>name</th>
+      <th>type</th>
+      <th>description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{return}</td>
+      <td>Promise</td>
+      <td>resolves when jasl is initialized</td>
+    </tr>
+  </tbody>
+</table>
 
 Initialize should be called before executing any other methods on an instance of Jasql.
 
@@ -117,10 +150,27 @@ _see [Ids and Indexes](#ids-and-indexes) for more details about ids_
 
 #### Read an existing document from the database.
 
-| name | type | description |
-|------|------|-------------|
-| id   | string | id of document read |
-| {return} | Promise | returns a promise resolving to the read document |
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>name</th>
+      <th>type</th>
+      <th>description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>id</td>
+      <td>string</td>
+      <td>id of document to read</td>
+    </tr>
+    <tr>
+      <td>{return}</td>
+      <td>Promise</td>
+      <td>resolves to the read document</td>
+    </tr>
+  </tbody>
+</table>
 
 The id must refer to an existing document.
 An error will be raised if a document with the given id does not exist.
@@ -137,11 +187,27 @@ jasql.read('users/Cody')
 
 #### Update an existing document.
 
-| name | type | description |
-|------|------|-------------|
-| doc  | object | document to update |
-| {return} | Promise | returns a promise resolving to the updated document |
-
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>name</th>
+      <th>type</th>
+      <th>description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>doc</td>
+      <td>Object</td>
+      <td>document to update</td>
+    </tr>
+    <tr>
+      <td>{return}</td>
+      <td>Promise</td>
+      <td>resolves to the updated document</td>
+    </tr>
+  </tbody>
+</table>
 
 The `doc` should have an `_id` of a document existing in the database.
 The existing document will be replaced with the new `doc`.
@@ -163,11 +229,32 @@ jasql.read('users/Cody')
 
 #### Lists some or all documents in the database.
 
-| name | type | description |
-|------|------|-------------|
-| opts | object | [optional] |
-| opts.id | string | id with possible wildcards to search for |
-| {return} | Promise | returns a promise resolving to an array of fetched documents |
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>name</th>
+      <th>type</th>
+      <th>description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>opts</td>
+      <td>object</td>
+      <td>[optional]</td>
+    </tr>
+    <tr>
+      <td>opts.id</td>
+      <td>string</td>
+      <td>id with possible wildcards to search for</td>
+    </tr>
+    <tr>
+      <td>{return}</td>
+      <td>Promise</td>
+      <td>resolves to an array of fetched documents</td>
+    </tr>
+  </tbody>
+</table>
 
 If called with no parameters, all documents will be returned.
 If called with an id (optionally with wildcards), all documents matching the id will be returned.
@@ -192,10 +279,27 @@ jasql.list({id:'users/%'})
 
 #### Delete a document from the database.
 
-| name | type | description |
-|------|------|-------------|
-| idOrDoc | string \| object | id of document or document to delete |
-| {return} | Promise | returns a promise |
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>name</th>
+      <th>type</th>
+      <th>description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>idOrDoc</td>
+      <td>string | Object</td>
+      <td>id of document or document to delete</td>
+    </tr>
+    <tr>
+      <td>{return}</td>
+      <td>Promise</td>
+      <td>resolves when the document has been deleted</td>
+    </tr>
+  </tbody>
+</table>
 
 The document to delete can either be specified by its id, or by passing
 an object that has an `_id` field that matches an existing document.
@@ -219,9 +323,22 @@ jasql.read('users/Cody')
 
 #### Closes any open connections to the database
 
-| name | type | description |
-|------|------|-------------|
-| _{return}_ | Promise | returns a promise resolving when all connections are closed |
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>name</th>
+      <th>type</th>
+      <th>description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{return}</td>
+      <td>Promise</td>
+      <td>resolves when all connections are closed</td>
+    </tr>
+  </tbody>
+</table>
 
 _Calling `destroy` is not required for long running server applications._
 However, it can be useful in your tests if they seem to "hang" do to open connections to the database.
