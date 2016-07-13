@@ -55,7 +55,7 @@
   "bugs": {
     "url": "https://github.com/codyzu/jasql/issues"
   },
-  "homepage": "https://github.com/codyzu/jasql#readme",
+  "homepage": "https://codyzu.github.io/jasql",
   "devDependencies": {
     "babel-cli": "^6.10.1",
     "babel-core": "^6.10.4",
