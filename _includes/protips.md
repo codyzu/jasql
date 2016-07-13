@@ -6,9 +6,9 @@ If you don't define this id, jasql will generate a nice random one for you.
 
 However, **don't be limited by random ids!**
 
-:bulb: Prefix your ids with the type of the document, i.e. `users/Cody`. This makes retrieving all documents of a given type super easy `jasql.list({id:'users/%'})`.
+<i class="fa fa-lightbulb-o fa-lg"></i> Prefix your ids with the type of the document, i.e. `users/Cody`. This makes retrieving all documents of a given type super easy `jasql.list({id:'users/%'})`.
 
-:bulb: Need documents sorted by date? Try using `new Date().toJSON()` in the id. When you list them, they will be sorted chronologically!
+<i class="fa fa-lightbulb-o fa-lg"></i> Need documents sorted by date? Try using `new Date().toJSON()` in the id. When you list them, they will be sorted chronologically!
 
 # Motivation (why not mongodb?)
 
