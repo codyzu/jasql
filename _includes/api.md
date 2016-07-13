@@ -76,20 +76,35 @@ jasql.initialize()
 
 #### Creat a new document in the database.
 
-| name | type | description |
-|------|------|-------------|
-| doc  | object | document to create in the database |
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>name</th>
+      <th>type</th>
+      <th>description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>doc</td>
+      <td>object</td>
+      <td>document to create in the database</td>
+    </tr>
+  </tbody>
+</table>
 
 The `doc` object can optionally include an `_id` field to identify the document.
 The `_id` must be unique, if a document with the same id already exists, an error will be raised.
 If the `doc` does not include an `_id` a random identifier will be automatically generated.
 
 Create a document with a random id:
+
 ```javascript
 jasql.create({ name: 'Cody', title: 'Software Engineer' })
 ```
 
 Create a document with a given id:
+
 ```javascript
 jasql.create({ _id: 'users/Cody', name: 'Cody', title: 'Software Engineer' })
 ```
