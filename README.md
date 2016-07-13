@@ -11,7 +11,7 @@ The API is heavily inspired by pouchdb and is intuitive and designed to be rapid
 
 _support for the missing databases above is coming soon!_
 
-## :sparkles: Head over to the [jasql website](https://codyzu.github.io/jasql) for complete API documentation, exmaples, and tips. :sparkles:
+## :sparkles: Head over to the [jasql website](https://codyzu.github.io/jasql) for complete API documentation, examples, and tips. :sparkles:
 
 # Quickstart
 
