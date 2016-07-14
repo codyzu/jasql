@@ -27,12 +27,25 @@ const JASQL_OPTIONS_PG = {
   }
 }
 
-test('sqlite3', (fixture) => {
+const JASQL_OPTIONS_MYSQL = {
+  db: {
+    client: 'mysql',
+    connection: {
+      host: 'localhost',
+      user: 'root',
+      database: 'jasql_test'
+    }
+  }
+}
+
+test('SQLITE3', (fixture) => {
   return mkdir(dirname(TEST_DATABASE))
     .then(() => testDb(fixture, JASQL_OPTIONS_SQLITE3))
 })
 
-test('postgres', (fixture) => testDb(fixture, JASQL_OPTIONS_PG))
+test('POSTGRES', (fixture) => testDb(fixture, JASQL_OPTIONS_PG))
+
+test('MYSQL', (fixture) => testDb(fixture, JASQL_OPTIONS_MYSQL))
 
 function testDb (dbFixture, opts) {
   let jasql

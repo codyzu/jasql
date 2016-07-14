@@ -6,7 +6,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/codyzu/jasql/badge.svg?branch=master)](https://coveralls.io/github/codyzu/jasql?branch=master)
 
 jasql is a node.js storage library for storing schemaless documents in various relational databases.
-Built on knex, jasql supports sqlite3, postgres, ~~mysql~~, ~~oracle~~, and ~~mssql~~.
+Built on knex, jasql supports sqlite3, postgres, mysql, ~~oracle~~, and ~~mssql~~.
 The API is heavily inspired by pouchdb and is intuitive and designed to be rapidly used in applications exporting REST APIs.
 
 _support for the missing databases above is coming soon!_
