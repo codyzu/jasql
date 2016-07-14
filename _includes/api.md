@@ -1,10 +1,12 @@
-# Jasql class
+## The jasql module exports a single class, `Jasql`.
 
-The Jasql class has a simple to use api.
+<p class="lead">This class exposes an intuitive API that makes CRUDL'ing (Create, Read, Update, Delete and List) documents a cinch.</p>
+
+## jasql was designed to easily integrate into REST API's, but it's easy API makes it suitable for all types of use cases.
 
 ---
 
-## `constructor(opts)`
+## `constructor (opts)`
 
 The constructor accepts an opts parameter.
 
@@ -42,10 +44,10 @@ The `opts.db` defines the storage driver used by jasql
 
 Below are some example using the various supported database technologies:
 
-#### Sqlite3
+### Sqlite3
 
 Sqlite3 is a great way to use jasql out-of-the-box.
-No databases or external services required because Sqlite3 is a file based database.
+No external databases or services required because Sqlite3 is a file based database.
 In fact, if you don't specify any `db` options to the jasql constructor, it will default Sqlite3.
 Fast, easy, done.
 
@@ -110,7 +112,7 @@ const jasql = new Jasql({
 
 ---
 
-## `initialize()`
+## `initialize ()`
 
 #### Initialize a Jasql instance, connecting to the database and creating the table if it does not exist.
 
@@ -140,7 +142,7 @@ jasql.initialize()
 
 ---
 
-## `create(doc)`
+## `create (doc)`
 
 #### Creat a new document in the database.
 
@@ -181,7 +183,7 @@ _see [Ids and Indexes](#ids-and-indexes) for more details about ids_
 
 ---
 
-## `read(id)`
+## `read (id)`
 
 #### Read an existing document from the database.
 
@@ -218,7 +220,7 @@ jasql.read('users/Cody')
 
 ---
 
-## `update(doc)`
+## `update (doc)`
 
 #### Update an existing document.
 
@@ -260,7 +262,7 @@ jasql.read('users/Cody')
 ---
 
 
-## `list(opts)`
+## `list (opts)`
 
 #### Lists some or all documents in the database.
 
@@ -310,7 +312,7 @@ jasql.list({id:'users/%'})
 
 ---
 
-## `del(idOrDoc)`
+## `del (idOrDoc)`
 
 #### Delete a document from the database.
 
@@ -354,7 +356,7 @@ jasql.read('users/Cody')
 
 ---
 
-## `destroy()`
+## `destroy ()`
 
 #### Closes any open connections to the database
 
