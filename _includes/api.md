@@ -35,9 +35,14 @@ The constructor accepts an opts parameter.
   </tbody>
 </table>
 
-`opts.db` is passed to the initializer of knex.
-See the [knex documentation](http://knexjs.org/#Installation-client) for details.
-Below are some examples:
+### Database
+
+The `opts.db` defines the storage driver used by jasql
+(internally it passed to the initializer of knex, see the [knex documentation](http://knexjs.org/#Installation-client) for more details).
+
+Below are some example using the various supported database technologies:
+
+#### Sqlite3
 
 jasql defaults, **Sqlite3** using `jasql.sqlite`:
 
@@ -58,6 +63,8 @@ const jasql = new Jasql({
 })
 ```
 
+#### Postgres
+
 jasql with **Postgres**:
 
 ```javascript
@@ -67,7 +74,26 @@ const jasql = new Jasql({
     connection: {
       host: 'localhost',
       user: 'postgres',
-      database: 'postgres'
+      password: 'rootpass',
+      database: 'dbname'
+    }
+  }
+})
+```
+
+#### Mysql
+
+jasql with **Mysql**:
+
+```javascript
+const jasql = new Jasql({
+  db: {
+    client: 'mysql',
+    connection: {
+      host: 'localhost',
+      user: 'root',
+      password: 'rootpass',
+      database: 'dbname'
     }
   }
 })

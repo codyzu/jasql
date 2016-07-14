@@ -1,3 +1,27 @@
+# Database support
+
+## Sqlite3
+
+Sqlite3 is a great way to use jasql out-of-the-box.
+No databases or external services required because Sqlite3 is a file based database.
+
+### Prerequisites
+
+The npm package `sqlite3` is required.
+This typically is installed automatically when you installed jasql.
+Just note that it's marded as an `optionalDependencies` for jasql, so it's possible for jasql to be installed without it.
+
+### Using
+
+```javascript
+var jasql = new Jasql({
+  db: {
+    client: 'sqlite3',
+    connection
+  }
+})
+``` 
+
 # Ids and Indexes
 
 By default, jasql supports a single indexed field named `_id`.
@@ -6,9 +30,11 @@ If you don't define this id, jasql will generate a nice random one for you.
 
 However, **don't be limited by random ids!**
 
-<i class="fa fa-lightbulb-o fa-lg"></i> Prefix your ids with the type of the document, i.e. `users/Cody`. This makes retrieving all documents of a given type super easy `jasql.list({id:'users/%'})`.
+<i class="fa fa-lightbulb-o fa-lg"></i> Prefix your ids with the type of the document, i.e. `users/Cody`.
+This makes retrieving all documents of a given type super easy `jasql.list({id:'users/%'})`.
 
-<i class="fa fa-lightbulb-o fa-lg"></i> Need documents sorted by date? Try using `new Date().toJSON()` in the id. When you list them, they will be sorted chronologically!
+<i class="fa fa-lightbulb-o fa-lg"></i> Need documents sorted by date? Try using `new Date().toJSON()` in the id.
+When you list them, they will be sorted chronologically!
 
 # Motivation (why not mongodb?)
 
