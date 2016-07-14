@@ -35,7 +35,7 @@ The constructor accepts an opts parameter.
   </tbody>
 </table>
 
-### Database
+### Database Options
 
 The `opts.db` defines the storage driver used by jasql
 (internally it passed to the initializer of knex, see the [knex documentation](http://knexjs.org/#Installation-client) for more details).
@@ -44,13 +44,18 @@ Below are some example using the various supported database technologies:
 
 #### Sqlite3
 
-jasql defaults, **Sqlite3** using `jasql.sqlite`:
+Sqlite3 is a great way to use jasql out-of-the-box.
+No databases or external services required because Sqlite3 is a file based database.
+In fact, if you don't specify any `db` options to the jasql constructor, it will default Sqlite3.
+Fast, easy, done.
+
+Use jasql defaults, a **Sqlite3** database in a file named `jasql.sqlite` will be created and/or used:
 
 ```javascript
 const jasql = new Jasql()
 ```
 
-jasql with **Sqlite3** and custom database file:
+**Sqlite3** with a custom database file:
 
 ```javascript
 const jasql = new Jasql({
@@ -64,6 +69,10 @@ const jasql = new Jasql({
 ```
 
 #### Postgres
+
+Postgres is a great free and open source database with an emphasis on standards compliance.
+
+jasql is tested on **PostgresSQL 9.4**.
 
 jasql with **Postgres**:
 
