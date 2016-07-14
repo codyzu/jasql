@@ -148,5 +148,9 @@ function getJsonType (dbOptions) {
     return 'jsonb'
   }
 
+  if (dbOptions.client === 'mysql') {
+    return 'json'
+  }
+
   return 'clob'
 }

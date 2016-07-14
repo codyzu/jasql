@@ -1,11 +1,21 @@
 language: node_js
+
 node_js:
   - 6
   - 5
   - 4
+
 after_success: npm run coverage
+
 services:
   - postgresql
+  - mysql
 
 addons:
   postgresql: "9.4"
+
+sudo: true
+
+before_script:
+  - bash .travis.install-mysql-5.7.sh
+  - mysql -e 'create database jasql_test;'
