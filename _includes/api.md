@@ -1,14 +1,14 @@
-## The jasql module exports a single class, `Jasql`.
+### The jasql module exports a single class, `Jasql`.
 
-<p class="lead">This class exposes an intuitive API that makes CRUDL'ing (Create, Read, Update, Delete and List) documents a cinch.</p>
+### This class exposes an intuitive API that makes CRUDL'ing (Create, Read, Update, Delete and List) documents a cinch. jasql is designed to easily integrate into applications serving REST API's, but jasql's easy API makes it suitable for all types of use cases.
 
-## jasql was designed to easily integrate into REST API's, but it's easy API makes it suitable for all types of use cases.
+Once instantiated, all of the methods of the `Jasql` class return a Promise.
 
 ---
 
 ## `constructor (opts)`
 
-The constructor accepts an opts parameter.
+#### The jasql constructor accepts has a single optional paratmeter, `opts`.
 
 <table class="table table-striped table-hover">
   <thead>
@@ -44,7 +44,7 @@ The `opts.db` defines the storage driver used by jasql
 
 Below are some example using the various supported database technologies:
 
-### Sqlite3
+#### Sqlite3
 
 Sqlite3 is a great way to use jasql out-of-the-box.
 No external databases or services required because Sqlite3 is a file based database.
@@ -72,11 +72,11 @@ const jasql = new Jasql({
 
 #### Postgres
 
-Postgres is a great free and open source database with an emphasis on standards compliance.
+Postgres (or PostgreSQL) is a great free and open source database with an emphasis on standards compliance.
 
 jasql is tested on **PostgresSQL 9.4**.
 
-jasql with **Postgres**:
+Configure jasql with **Postgres**:
 
 ```javascript
 const jasql = new Jasql({
@@ -94,7 +94,11 @@ const jasql = new Jasql({
 
 #### Mysql
 
-jasql with **Mysql**:
+MySQL is popular open source database option.
+
+jasql is tested on **MySQL 5.7**.
+
+Configure jasql with **MySQL**:
 
 ```javascript
 const jasql = new Jasql({
@@ -164,8 +168,8 @@ jasql.initialize()
 </table>
 
 The `doc` object can optionally include an `_id` field to identify the document.
-The `_id` must be unique, if a document with the same id already exists, an error will be raised.
-If the `doc` does not include an `_id` a random identifier will be automatically generated.
+The id must be unique, if a document with the same id already exists, an error will be raised.
+If the `doc` does not include an `_id`, a random identifier will be automatically generated.
 
 Create a document with a random id:
 
@@ -179,7 +183,7 @@ Create a document with a given id:
 jasql.create({ _id: 'users/Cody', name: 'Cody', title: 'Software Engineer' })
 ```
 
-_see [Ids and Indexes](#ids-and-indexes) for more details about ids_
+_See [Ids and Indexes](#ids-and-indexes) for more details about ids._
 
 ---
 

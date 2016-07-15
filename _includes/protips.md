@@ -1,27 +1,3 @@
-# Database support
-
-## Sqlite3
-
-Sqlite3 is a great way to use jasql out-of-the-box.
-No databases or external services required because Sqlite3 is a file based database.
-
-### Prerequisites
-
-The npm package `sqlite3` is required.
-This typically is installed automatically when you installed jasql.
-Just note that it's marded as an `optionalDependencies` for jasql, so it's possible for jasql to be installed without it.
-
-### Using
-
-```javascript
-var jasql = new Jasql({
-  db: {
-    client: 'sqlite3',
-    connection
-  }
-})
-``` 
-
 # Ids and Indexes
 
 By default, jasql supports a single indexed field named `_id`.
@@ -35,6 +11,8 @@ This makes retrieving all documents of a given type super easy `jasql.list({id:'
 
 <i class="fa fa-lightbulb-o fa-lg"></i> Need documents sorted by date? Try using `new Date().toJSON()` in the id.
 When you list them, they will be sorted chronologically!
+
+If you prefer to use a field with a name other than `_id`, the [Jasql constructor](#constructor-opts) has an option to provide a custom field name.
 
 # Motivation (why not mongodb?)
 
