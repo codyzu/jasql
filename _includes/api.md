@@ -54,13 +54,13 @@ Fast, easy, done.
 Use jasql defaults, a **Sqlite3** database in a file named `jasql.sqlite` will be created and/or used:
 
 ```javascript
-const jasql = new Jasql()
+var jasql = new Jasql()
 ```
 
 **Sqlite3** with a custom database file:
 
 ```javascript
-const jasql = new Jasql({
+var jasql = new Jasql({
   db: {
     client: 'sqlite3',
     connection: {
@@ -79,7 +79,7 @@ jasql is tested on **PostgresSQL 9.4**.
 Configure jasql with **Postgres**:
 
 ```javascript
-const jasql = new Jasql({
+var jasql = new Jasql({
   db: {
     client: 'pg',
     connection: {

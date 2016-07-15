@@ -30,8 +30,8 @@ One is required, feel free to uninstall the dependencies ones you don't use.
 During the call to `initialize`, jasql will create it's table in the database if it does not already exist.
 
 ```javascript
-const Jasql = require('jasql')
-const jasql = new Jasql()
+var Jasql = require('jasql')
+var jasql = new Jasql()
 
 jasql.initialize()
   .then(() => console.log('jasql is ready to work!'))
