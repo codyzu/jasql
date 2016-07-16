@@ -2,7 +2,7 @@
 
 ## 1. Install jasql:
 
-#### jasql is [available on npm](https://www.npmjs.com/package/jasql) and is easy to install.
+#### jasql is [available on npm](https://www.npmjs.com/package/jasql), making installation as easy as:
 
 ```
 npm install jasql

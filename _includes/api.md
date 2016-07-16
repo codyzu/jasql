@@ -40,7 +40,8 @@ Once instantiated, all of the methods of the `Jasql` class return a Promise.
 ### Database Options
 
 The `opts.db` defines the storage driver used by jasql
-(internally it passed to the initializer of knex, see the [knex documentation](http://knexjs.org/#Installation-client) for more details).
+(internally it is passed to the initializer of [knex](http://knexjs.org),
+see the [knex documentation](http://knexjs.org/#Installation-client) for more details).
 
 Below are some example using the various supported database technologies:
 
@@ -51,7 +52,8 @@ No external databases or services required because Sqlite3 is a file based datab
 In fact, if you don't specify any `db` options to the jasql constructor, it will default Sqlite3.
 Fast, easy, done.
 
-Use jasql defaults, a **Sqlite3** database in a file named `jasql.sqlite` will be created and/or used:
+Use jasql defaults, a **Sqlite3** database, located at `./jasql.sqlite`
+(the db will be created if it does not already exist):
 
 ```javascript
 var jasql = new Jasql()
