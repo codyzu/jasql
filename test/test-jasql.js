@@ -21,8 +21,9 @@ const JASQL_OPTIONS_PG = {
     client: 'pg',
     connection: {
       host: 'localhost',
-      user: 'postgres',
-      database: 'postgres'
+      user: 'jasqluser',
+      password: 'jasqlpass',
+      database: 'jasqldb'
     }
   }
 }
@@ -32,8 +33,9 @@ const JASQL_OPTIONS_MYSQL = {
     client: 'mysql',
     connection: {
       host: 'localhost',
-      user: 'root',
-      database: 'jasql_test'
+      user: 'jasqluser',
+      password: 'jasqlpass',
+      database: 'jasqldb'
     }
   }
 }
