@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 
+## [0.4.2] - 2015-07-14
+### Added
+- package.json tags
+
 ## [0.4.0] - 2015-07-14
 ### Added
 - feat: mysql support
