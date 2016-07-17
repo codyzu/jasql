@@ -47,8 +47,12 @@
   },
   "keywords": [
     "json",
+    "mysql",
+    "postgres",
+    "postgresql",
     "sql",
-    "sqlite"
+    "sqlite",
+    "database"
   ],
   "author": "codyzu",
   "license": "MIT",
