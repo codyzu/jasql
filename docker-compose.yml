@@ -1,0 +1,21 @@
+version: '2'
+services:
+
+  postgres:
+    image: postgres:9.5
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: jasqldb
+      POSTGRES_USER: jasqluser
+      POSTGRES_PASSWORD: jasqlpass
+
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: jasqldb
+      MYSQL_USER: jasqluser
+      MYSQL_PASSWORD: jasqlpass
+      MYSQL_ROOT_PASSWORD: root

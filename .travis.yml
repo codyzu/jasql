@@ -17,5 +17,8 @@ addons:
 sudo: true
 
 before_script:
+  - psql -c 'create database jasqldb;' -U postgres
+  - psql -c "create user jasqluser password 'jasqlpass'; grant all privileges on database jasqldb to jasqluser;" -U postgres
   - bash .travis.install-mysql-5.7.sh
-  - mysql -e 'create database jasql_test;'
+  - mysql -e 'create database jasqldb;'
+  - mysql -e "create user 'jasqluser'@'localhost' identified by 'jasqlpass'; grant all privileges on jasqldb . * to 'jasqluser'@'localhost';" -uroot
