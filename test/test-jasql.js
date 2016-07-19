@@ -45,9 +45,9 @@ test('SQLITE3', (fixture) => {
     .then(() => testDb(fixture, JASQL_OPTIONS_SQLITE3))
 })
 
-test('POSTGRES', (fixture) => testDb(fixture, JASQL_OPTIONS_PG))
+test('POSTGRES', {skip: true}, (fixture) => testDb(fixture, JASQL_OPTIONS_PG))
 
-test('MYSQL', (fixture) => testDb(fixture, JASQL_OPTIONS_MYSQL))
+test('MYSQL', {skip: true}, (fixture) => testDb(fixture, JASQL_OPTIONS_MYSQL))
 
 function testDb (dbFixture, opts) {
   let jasql
@@ -278,6 +278,35 @@ function testDb (dbFixture, opts) {
       })
       .then(() => jasql.initialize())
       .then(() => t.pass('sucessfully re-initialize'))
+  })
+
+  dbFixture.test('search', (searchFixture) => {
+    const testDocs = [
+      {
+        name: 'cody'
+      },
+      {
+        name: 'brian'
+      }
+    ]
+
+    searchFixture.test('setup: add test docs', (t) => {
+      const createPromises = testDocs.map((doc) => jasql.create(doc))
+      return Promise.all(createPromises)
+    })
+
+    searchFixture.test('basic value equals', (t) => {
+      return jasql.list({
+        search: [{
+          path: 'name',
+          equals: 'cody'
+        }]
+      })
+      .then((docs) => {
+        t.equal(docs.length, 1, 'returns 1 document')
+        t.equal(docs[0].name, 'cody', 'return document with name cody')
+      })
+    })
   })
 
   dbFixture.test('teardown', (t) => jasql.destroy())

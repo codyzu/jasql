@@ -39,6 +39,7 @@ export default class Jasql {
   }
 
   async create (doc) {
+    console.log('CREATING:', doc)
     // insert doc into db
     const newDoc = defaults({}, doc)
 
@@ -81,6 +82,10 @@ export default class Jasql {
     // if an id is included, add the 'where like' clause
     if (opts && opts.id) {
       query.where(this.idColName, 'like', opts.id)
+    }
+
+    if (opts && opts.search) {
+      this._buildSearchClauses(query, opts.search)
     }
 
     // add the 'order by' clause
@@ -127,6 +132,16 @@ export default class Jasql {
     }
 
     return JSON.parse(row[this.jsonColName])
+  }
+
+  _buildSearchClauses (query, search) {
+    search.forEach((s) => this._buildSearchClause(query, s))
+  }
+
+  _buildSearchClause (query, search) {
+    if (search.path && search.equals) {
+      query.whereRaw(`json_extract(${this.jsonColName}, '$.${search.path}') = ?`, search.equals)
+    }
   }
 
   _isPostgres () {
