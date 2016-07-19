@@ -1,6 +1,6 @@
 import knex from 'knex'
 import {generate as shortId} from 'shortid'
-import {defaultsDeep as defaults} from 'lodash'
+import {defaultsDeep as defaults, get} from 'lodash'
 import {DocumentNotFoundError, DatabaseError} from './errors'
 
 const DEFAULT_OPTIONS = {
@@ -144,13 +144,12 @@ function tableSchema (table, jasql) {
 }
 
 function getJsonType (dbOptions) {
-  if (dbOptions.client === 'pg') {
-    return 'jsonb'
+  // maps the db client to the db type used for storing json
+  const jsonTypes = {
+    pg: 'jsonb',
+    mysql: 'json',
+    sqlite3: 'clob'
   }
 
-  if (dbOptions.client === 'mysql') {
-    return 'json'
-  }
-
-  return 'clob'
+  return get(jsonTypes, dbOptions.client, 'text')
 }
