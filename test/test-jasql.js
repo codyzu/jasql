@@ -285,11 +285,17 @@ function testDb (dbFixture, opts) {
       {
         name: 'cody',
         status: 'A',
+        address: {
+          city: 'Annecy'
+        },
         age: 36
       },
       {
         name: 'brian',
         status: 'A',
+        address: {
+          city: 'Paris'
+        },
         age: 43
       },
       {
@@ -304,9 +310,19 @@ function testDb (dbFixture, opts) {
       return Promise.all(createPromises)
     })
 
-    searchFixture.test('basic value equals', (t) => {
+    searchFixture.test('single depth equality', (t) => {
       return jasql.list({
         search: {name: 'cody'}
+      })
+      .then((docs) => {
+        t.equal(docs.length, 1, 'returns 1 document')
+        t.equal(docs[0].name, 'cody', 'return document with name cody')
+      })
+    })
+
+    searchFixture.test('deep equality', (t) => {
+      return jasql.list({
+        search: {address: {city: 'Annecy'}}
       })
       .then((docs) => {
         t.equal(docs.length, 1, 'returns 1 document')

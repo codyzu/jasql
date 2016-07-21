@@ -69,7 +69,7 @@ var compoundOperatorComparators = {
 
 export default function parse (q, jsonPath) {
   const parseResult = parser.parse(q)
-  console.log('PARSE RESULT:', parseResult)
+  console.log('PARSE RESULT:', JSON.stringify(parseResult, null, 2))
   const parts = parseResult.parts
   let query = ''
 
@@ -114,7 +114,17 @@ function partMatches (part, jsonPath) {
   }
 
   if(part.operator === undefined) { // equality
-    return `${jsonPath(part.field)} = '${part.operand}'`
+    let value
+    
+    if (part.operand instanceof Object) {
+      value = JSON.stringify(part.operand)
+    } else {
+      value = part.operand
+    }
+
+    return `${jsonPath(part.field)} = '${value}'`
+  } else if(part.operator in compoundOperatorComparators) {
+    return `and`
   }
 
   // var pointers = DotNotationPointers(document, part.field)
