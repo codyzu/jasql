@@ -283,10 +283,19 @@ function testDb (dbFixture, opts) {
   dbFixture.test('search', (searchFixture) => {
     const testDocs = [
       {
-        name: 'cody'
+        name: 'cody',
+        status: 'A',
+        age: 36
       },
       {
-        name: 'brian'
+        name: 'brian',
+        status: 'A',
+        age: 43
+      },
+      {
+        name: 'sarah',
+        status: 'B',
+        age: 16
       }
     ]
 
@@ -297,10 +306,32 @@ function testDb (dbFixture, opts) {
 
     searchFixture.test('basic value equals', (t) => {
       return jasql.list({
-        search: [{
-          path: 'name',
-          equals: 'cody'
-        }]
+        search: {name: 'cody'}
+      })
+      .then((docs) => {
+        t.equal(docs.length, 1, 'returns 1 document')
+        t.equal(docs[0].name, 'cody', 'return document with name cody')
+      })
+    })
+
+    searchFixture.test('basic value equals', (t) => {
+      return jasql.list({
+        search: {status: 'A', age: {$lt: 40}}
+      })
+      .then((docs) => {
+        t.equal(docs.length, 1, 'returns 1 document')
+        t.equal(docs[0].name, 'cody', 'return document with name cody')
+      })
+    })
+
+    searchFixture.test('basic value equals', (t) => {
+      return jasql.list({
+        search: {
+          $or: [
+            {status: 'A'},
+            {age: {$lt: 30}}
+          ]
+        }
       })
       .then((docs) => {
         t.equal(docs.length, 1, 'returns 1 document')

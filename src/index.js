@@ -2,6 +2,7 @@ import knex from 'knex'
 import {generate as shortId} from 'shortid'
 import {defaultsDeep as defaults, get} from 'lodash'
 import {DocumentNotFoundError, DatabaseError} from './errors'
+import parser from 'mongo-parse'
 
 const DEFAULT_OPTIONS = {
   db: {
@@ -135,6 +136,8 @@ export default class Jasql {
   }
 
   _buildSearchClauses (query, search) {
+    const q = parser.parse(search)
+    console.log('QUERY:', JSON.stringify(q, null, 2))
     search.forEach((s) => this._buildSearchClause(query, s))
   }
 
