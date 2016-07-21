@@ -73,17 +73,19 @@ export default function parse (q, jsonPath) {
   const parts = parseResult.parts
   let query = ''
 
+  const queryRoots = []
+
   for (let n = 0; n < parts.length; n++) {
     let part = parts[n]
     console.log('PART', part)
-    query += partMatches(part, jsonPath)
+    queryRoots.push(`(${partMatches(part, jsonPath)})`)
     // if (!partMatches(part, document)) {
     //   return false
     // }
   }
   // else
 
-  return query
+  return queryRoots.join(' and ')
 }
 
 // function transform(parts, document, validate) {
@@ -117,12 +119,14 @@ function partMatches (part, jsonPath) {
     let value
     
     if (part.operand instanceof Object) {
-      value = JSON.stringify(part.operand)
-    } else {
+      value = `'${JSON.stringify(part.operand)}'`
+    } else if (typeof part.operand === 'number') {
       value = part.operand
+    } else {
+      value = `'${part.operand}'`
     }
 
-    return `${jsonPath(part.field)} = '${value}'`
+    return `${jsonPath(part.field)} = ${value}`
   } else if(part.operator in compoundOperatorComparators) {
     return `and`
   }
