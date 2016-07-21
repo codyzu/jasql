@@ -156,6 +156,33 @@ export default class Jasql {
   }
 }
 
+const queryOperators = {
+  $eq: (q, j, l, r) => `${j(l)} = ${getOperandValue(r)}`,
+  $lt: (q, j, l, r) => `${j(l)} < ${getOperandValue(r)}`,
+  $gt: (q, j, l, r) => `${j(l)} > ${getOperandValue(r)}`,
+}
+
+const logicalOperators = {
+  $and: (q, j, exps) => exps.map((e) => `(${parseSearch(q, j, e)})`).join(' and '),
+  $or: (q, j, exps) => exps.map((e) => `(${parseSearch(q, j, e)})`).join(' or ')
+}
+
+function parseSearch(query, jsonExtract, search) {
+  for (let [key, value] of Object.entries(seach)) {
+
+  }
+}
+
+function getOperandValue(operand) {
+  if (operand instanceof Object) {
+    value = `'${JSON.stringify(operand)}'`
+  } else if (typeof operand === 'number') {
+    value = operand
+  } else { // string
+    value = `'${operand}'`
+  }
+}
+
 function handleDbError (err) {
   throw new DatabaseError(err)
 }
