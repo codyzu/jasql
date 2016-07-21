@@ -314,7 +314,7 @@ function testDb (dbFixture, opts) {
       })
     })
 
-    searchFixture.test('basic value equals', (t) => {
+    searchFixture.test('basic value equals', {skip: true}, (t) => {
       return jasql.list({
         search: {status: 'A', age: {$lt: 40}}
       })
@@ -324,7 +324,7 @@ function testDb (dbFixture, opts) {
       })
     })
 
-    searchFixture.test('basic value equals', (t) => {
+    searchFixture.test('basic value equals', {skip: true}, (t) => {
       return jasql.list({
         search: {
           $or: [

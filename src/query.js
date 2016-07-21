@@ -67,32 +67,54 @@ var compoundOperatorComparators = {
   // }
 }
 
-export default function parse (q) {
-  const query = parser.parse(q)
-  return query
-}
-
-var matches = function (parts, document, validate) {
-  // if(validate !== false) {
-  //   validateDocumentObject(document)
-  // }
+export default function parse (q, jsonPath) {
+  const parseResult = parser.parse(q)
+  console.log('PARSE RESULT:', parseResult)
+  const parts = parseResult.parts
+  let query = ''
 
   for (let n = 0; n < parts.length; n++) {
     let part = parts[n]
-    if (!partMatches(part, document)) {
-      return false
-    }
+    console.log('PART', part)
+    query += partMatches(part, jsonPath)
+    // if (!partMatches(part, document)) {
+    //   return false
+    // }
   }
   // else
 
-  return true
+  return query
 }
 
-function partMatches (part, document) {
+// function transform(parts, document, validate) {
+//   // if(validate !== false) {
+//   //   validateDocumentObject(document)
+//   // }
+
+//   let query = ''
+
+//   for (let n = 0; n < parts.length; n++) {
+//     let part = parts[n]
+//     console.log('PART', part)
+//     query += partMatches(part)
+//     // if (!partMatches(part, document)) {
+//     //   return false
+//     // }
+//   }
+//   // else
+
+//   return query
+// }
+
+function partMatches (part, jsonPath) {
   if (part.operator in simpleComparators) {
     return true
   } else if (part.operator in compoundOperatorComparators) {
     return true
+  }
+
+  if(part.operator === undefined) { // equality
+    return `${jsonPath(part.field)} = '${part.operand}'`
   }
 
   // var pointers = DotNotationPointers(document, part.field)

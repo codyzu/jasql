@@ -3,6 +3,7 @@ import {generate as shortId} from 'shortid'
 import {defaultsDeep as defaults, get} from 'lodash'
 import {DocumentNotFoundError, DatabaseError} from './errors'
 import parser from 'mongo-parse'
+import parse from './query'
 
 const DEFAULT_OPTIONS = {
   db: {
@@ -136,9 +137,12 @@ export default class Jasql {
   }
 
   _buildSearchClauses (query, search) {
-    const q = parser.parse(search)
-    console.log('QUERY:', JSON.stringify(q, null, 2))
-    search.forEach((s) => this._buildSearchClause(query, s))
+    const p = parse(search, (p) => `json_extract(${this.jsonColName}, '$.${p}')`)
+    console.log('PARSE:', p)
+    query.whereRaw(p)
+    // const q = parser.parse(search)
+    // console.log('QUERY:', JSON.stringify(q, null, 2))
+    // search.forEach((s) => this._buildSearchClause(query, s))
   }
 
   _buildSearchClause (query, search) {
