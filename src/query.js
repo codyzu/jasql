@@ -1,5 +1,20 @@
 import parser from 'mongo-parse'
 
+// const 
+
+// export function parse2(q, jsonPath) {
+//   if (q.keys().length > 1) {
+//     // add any implicit and
+//     return parse2({$and: q})
+//   }
+
+
+// }
+
+// function parseKeyValaue (key, value) {
+
+// }
+
 const simpleComparators = {
   $gt: function (a, b) { return a > b },
   $gte: function (a, b) { return a >= b },
