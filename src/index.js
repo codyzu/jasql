@@ -169,7 +169,13 @@ const logicalOperators = {
 }
 
 function parseSearch(query, jsonExtract, search) {
-  const s = Object.keys(search).length > 1 ? {$and: search} : search
+  const s = Object.keys(search).length > 1 ? {$and: Object.keys(search).map(((k) => {
+    const o = {}
+    o[k] = search[k]
+    return o
+  }))} : search
+
+  console.log('SEARCH:', s)
 
   return parseSearchEntry(query, jsonExtract, s)
 }
@@ -178,7 +184,9 @@ function parseSearchEntry(query, jsonExtract, search) {
   for (let key in search) {
     if (key in logicalOperators) {
       console.log('LOGICAL:', key)
-      return logicalOperators[key](query, jsonExtract, search[key])
+      const exps = search[key]
+      console.log('EXPRESSIONS:', exps)
+      return logicalOperators[key](query, jsonExtract, exps)
     } else {
       const field = key
       const value = search[key]
@@ -222,7 +230,7 @@ function parseSearchEntry(query, jsonExtract, search) {
 function getOperandValue(operand) {
   if (isObject(operand)) {
     return `'${JSON.stringify(operand)}'`
-  } else if (isNumber('number')) {
+  } else if (isNumber(operand)) {
     return operand
   } else { // string
     return `'${operand}'`

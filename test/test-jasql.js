@@ -330,7 +330,17 @@ function testDb (dbFixture, opts) {
       })
     })
 
-    searchFixture.test('and equality', (t) => {
+    searchFixture.test('and equality explicit', (t) => {
+      return jasql.list({
+        search: {$and : [{status: 'A'}, {age: 43}]}
+      })
+      .then((docs) => {
+        t.equal(docs.length, 1, 'returns 1 document')
+        t.equal(docs[0].name, 'brian', 'return document with name brian')
+      })
+    })
+
+    searchFixture.test('and equality implicit', (t) => {
       return jasql.list({
         search: {status: 'A', age: 43}
       })
