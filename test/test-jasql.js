@@ -320,7 +320,7 @@ function testDb (dbFixture, opts) {
       })
     })
 
-    searchFixture.test('deep equality', (t) => {
+    searchFixture.test('nested object equality', (t) => {
       return jasql.list({
         search: {address: {city: 'Annecy'}}
       })
@@ -350,28 +350,14 @@ function testDb (dbFixture, opts) {
       })
     })
 
-    searchFixture.test('basic value equals', {skip: true}, (t) => {
+    searchFixture.test('or operator', (t) => {
       return jasql.list({
-        search: {status: 'A', age: {$lt: 40}}
+        search: {$or: [{name: 'cody'}, {status: 'B'}]}
       })
       .then((docs) => {
-        t.equal(docs.length, 1, 'returns 1 document')
-        t.equal(docs[0].name, 'cody', 'return document with name cody')
-      })
-    })
-
-    searchFixture.test('basic value equals', {skip: true}, (t) => {
-      return jasql.list({
-        search: {
-          $or: [
-            {status: 'A'},
-            {age: {$lt: 30}}
-          ]
-        }
-      })
-      .then((docs) => {
-        t.equal(docs.length, 1, 'returns 1 document')
-        t.equal(docs[0].name, 'cody', 'return document with name cody')
+        t.equal(docs.length, 2, 'returns 2 documents')
+        t.equal(docs[0].name, 'cody', 'return document 0 with name brian')
+        t.equal(docs[1].name, 'sarah', 'return document 0 with name sarah')
       })
     })
   })
