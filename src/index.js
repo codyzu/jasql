@@ -190,40 +190,19 @@ function parseSearchEntry(query, jsonExtract, search) {
     } else {
       const field = key
       const value = search[key]
-
       console.log(`KEY: ${field} VALUE: ${value}`)
 
       if (Object.keys(value).length === 1 && Object.keys(value)[0] in queryOperators) {
         // query operator
         const operator = Object.keys(value)[0]
         const expression = value[operator]
-        
-        // if (!(operator in queryOperators)) {
-        //   throw new Error(`opertaor '${operator}' not valid`)
-        // }
-
-        console.log('QUERY:', operator)
         return queryOperators[operator](query, jsonExtract, field, expression)
-
-        // throw new Error(`operator '${key}' has invalid value: ${JSON.stringify(search[key])}`)
       }
 
       // implied $eq (could be nested object)
 
-      // if(isObject(value)) {
-      //   // nested object equality
-      // }
-
       return queryOperators.$eq(query, jsonExtract, field, search[key])
     }
-    // } else if (key in queryOperators) {
-    //   console.log('QUERY:', key)
-    //   return queryOperators[key](query, jsonExtract, key, )
-    // } else {
-    //   // assume implicit equals if the operator is not found
-    //   console.log('OTHER:', key)
-    //   return queryOperators.$eq(query, jsonExtract, l, r)
-    // }
   }  
 }
 
