@@ -136,7 +136,7 @@ export default class Jasql {
   }
 
   _buildSearchClauses (query, search) {
-    const p = parseQuery(query, (p) => `json_extract(${this.jsonColName}, '$.${p}')`, search)
+    const p = parseQuery((p) => `json_extract(${this.jsonColName}, '$.${p}')`, search)
     console.log('PARSE:', p)
     query.whereRaw(p)
   }
