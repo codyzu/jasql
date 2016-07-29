@@ -26,23 +26,24 @@ export default function parseSearch (jsonExtract, search) {
 function parseSearchEntry (jsonExtract, search) {
   for (let key in search) {
     if (key in logicalOperators) {
-      console.log('LOGICAL:', key)
-      const exps = search[key]
-      console.log('EXPRESSIONS:', exps)
-      return logicalOperators[key](jsonExtract, exps)
+      // logical operator: { $operator: [exp1, exp2, ...]}
+
+      const operator = key
+      const expressions = search[key]
+      return logicalOperators[operator](jsonExtract, expressions)
     } else {
       const field = key
       const value = search[key]
       console.log(`KEY: ${field} VALUE: ${value}`)
 
       if (Object.keys(value).length === 1 && Object.keys(value)[0] in queryOperators) {
-        // query operator
+        // query operator: { field: { $operator: expression }}
         const operator = Object.keys(value)[0]
         const expression = value[operator]
         return queryOperators[operator](jsonExtract, field, expression)
       }
 
-      // implied $eq (could be nested object)
+      // implied equals: { field1: value1} or { field1: {nested: object}
 
       return queryOperators.$eq(jsonExtract, field, search[key])
     }
