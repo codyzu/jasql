@@ -357,7 +357,7 @@ function testDb (dbFixture, opts) {
       .then((docs) => {
         t.equal(docs.length, 2, 'returns 2 documents')
         console.log(docs.map((d) => d.name))
-        t.equal(docs.map((d) => d.name).indexOf('cody') > -1, true , 'returns 1 document with name cody')
+        t.equal(docs.map((d) => d.name).indexOf('cody') > -1, true, 'returns 1 document with name cody')
         t.equal(docs.map((d) => d.name).indexOf('sarah') > -1, true, 'returns 1 document with name sarah')
       })
     })
@@ -369,6 +369,16 @@ function testDb (dbFixture, opts) {
       .then((docs) => {
         t.equal(docs.length, 1, 'returns 1 document')
         t.equal(docs[0].name, 'sarah', 'return document with name sarah')
+      })
+    })
+
+    searchFixture.test('$gt operator', (t) => {
+      return jasql.list({
+        search: {age: {$gt: 40}}
+      })
+      .then((docs) => {
+        t.equal(docs.length, 1, 'returns 1 document')
+        t.equal(docs[0].name, 'brian', 'return document with name brian')
       })
     })
   })
