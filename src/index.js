@@ -1,6 +1,6 @@
 import knex from 'knex'
 import {generate as shortId} from 'shortid'
-import {defaultsDeep as defaults, get, isString, isPlainObject as isObject} from 'lodash'
+import {defaultsDeep as defaults, get, isString, isPlainObject as isObject, isNumber} from 'lodash'
 import {DocumentNotFoundError, DatabaseError} from './errors'
 import parser from 'mongo-parse'
 import parse from './query'
@@ -181,29 +181,32 @@ function parseSearchEntry(query, jsonExtract, search) {
       return logicalOperators[key](query, jsonExtract, search[key])
     } else {
       const field = key
-      const v = search[key]
+      const value = search[key]
 
-      console.log(`KEY: ${field} VALUE: ${v}`)
+      console.log(`KEY: ${field} VALUE: ${value}`)
 
-      if (!isObject(search[key])) {
-        // implied equality
-        console.log('IMPLIED $eq')
-        return queryOperators.$eq(query, jsonExtract, field, search[key])
+      if (Object.keys(value).length === 1 && Object.keys(value)[0] in queryOperators) {
+        // query operator
+        const operator = Object.keys(value)[0]
+        const expression = value[operator]
+        
+        // if (!(operator in queryOperators)) {
+        //   throw new Error(`opertaor '${operator}' not valid`)
+        // }
+
+        console.log('QUERY:', operator)
+        return queryOperators[operator](query, jsonExtract, field, expression)
+
+        // throw new Error(`operator '${key}' has invalid value: ${JSON.stringify(search[key])}`)
       }
 
-      if (Object.keys(search[key]).length !== 1) {
-        throw new Error(`operator '${key}' has invalid value: ${JSON.stringify(search[key])}`)
-      }
+      // implied $eq (could be nested object)
 
-      const operator = Object.keys(search[key])[0]
-      const value = search[key][operator]
-       
-      if (!operator in queryOperators) {
-        throw new Error(`opertaor '${operator}' not valid`)
-      }
+      // if(isObject(value)) {
+      //   // nested object equality
+      // }
 
-      console.log('QUERY:', operator)
-      return queryOperators[operator](query, jsonExtract, field, value)
+      return queryOperators.$eq(query, jsonExtract, field, search[key])
     }
     // } else if (key in queryOperators) {
     //   console.log('QUERY:', key)
@@ -218,11 +221,11 @@ function parseSearchEntry(query, jsonExtract, search) {
 
 function getOperandValue(operand) {
   if (isObject(operand)) {
-    value = `'${JSON.stringify(operand)}'`
-  } else if (typeof operand === 'number') {
-    value = operand
+    return `'${JSON.stringify(operand)}'`
+  } else if (isNumber('number')) {
+    return operand
   } else { // string
-    value = `'${operand}'`
+    return `'${operand}'`
   }
 }
 
