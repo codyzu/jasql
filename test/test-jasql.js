@@ -332,7 +332,7 @@ function testDb (dbFixture, opts) {
 
     searchFixture.test('and equality explicit', (t) => {
       return jasql.list({
-        search: {$and : [{status: 'A'}, {age: 43}]}
+        search: {$and: [{status: 'A'}, {age: 43}]}
       })
       .then((docs) => {
         t.equal(docs.length, 1, 'returns 1 document')

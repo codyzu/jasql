@@ -1,9 +1,8 @@
 import knex from 'knex'
 import {generate as shortId} from 'shortid'
-import {defaultsDeep as defaults, get, isString, isPlainObject as isObject, isNumber} from 'lodash'
+import {defaultsDeep as defaults, get} from 'lodash'
 import {DocumentNotFoundError, DatabaseError} from './errors'
-import parser from 'mongo-parse'
-import parse from './query'
+import parseQuery from './query'
 
 const DEFAULT_OPTIONS = {
   db: {
@@ -137,82 +136,13 @@ export default class Jasql {
   }
 
   _buildSearchClauses (query, search) {
-    // const p = parse(search, (p) => `json_extract(${this.jsonColName}, '$.${p}')`)
-    const p = parseSearch(query, (p) => `json_extract(${this.jsonColName}, '$.${p}')`, search)
+    const p = parseQuery(query, (p) => `json_extract(${this.jsonColName}, '$.${p}')`, search)
     console.log('PARSE:', p)
     query.whereRaw(p)
-    // const q = parser.parse(search)
-    // console.log('QUERY:', JSON.stringify(q, null, 2))
-    // search.forEach((s) => this._buildSearchClause(query, s))
-  }
-
-  _buildSearchClause (query, search) {
-    if (search.path && search.equals) {
-      query.whereRaw(`json_extract(${this.jsonColName}, '$.${search.path}') = ?`, search.equals)
-    }
   }
 
   _isPostgres () {
     return this.dbOptions.client === 'pg'
-  }
-}
-
-const queryOperators = {
-  $eq: (q, j, l, r) => `${j(l)} = ${getOperandValue(r)}`,
-  $lt: (q, j, l, r) => `${j(l)} < ${getOperandValue(r)}`,
-  $gt: (q, j, l, r) => `${j(l)} > ${getOperandValue(r)}`,
-}
-
-const logicalOperators = {
-  $and: (q, j, exps) => exps.map((e) => `(${parseSearchEntry(q, j, e)})`).join(' and '),
-  $or: (q, j, exps) => exps.map((e) => `(${parseSearchEntry(q, j, e)})`).join(' or ')
-}
-
-function parseSearch(query, jsonExtract, search) {
-  const s = Object.keys(search).length > 1 ? {$and: Object.keys(search).map(((k) => {
-    const o = {}
-    o[k] = search[k]
-    return o
-  }))} : search
-
-  console.log('SEARCH:', s)
-
-  return parseSearchEntry(query, jsonExtract, s)
-}
-
-function parseSearchEntry(query, jsonExtract, search) {
-  for (let key in search) {
-    if (key in logicalOperators) {
-      console.log('LOGICAL:', key)
-      const exps = search[key]
-      console.log('EXPRESSIONS:', exps)
-      return logicalOperators[key](query, jsonExtract, exps)
-    } else {
-      const field = key
-      const value = search[key]
-      console.log(`KEY: ${field} VALUE: ${value}`)
-
-      if (Object.keys(value).length === 1 && Object.keys(value)[0] in queryOperators) {
-        // query operator
-        const operator = Object.keys(value)[0]
-        const expression = value[operator]
-        return queryOperators[operator](query, jsonExtract, field, expression)
-      }
-
-      // implied $eq (could be nested object)
-
-      return queryOperators.$eq(query, jsonExtract, field, search[key])
-    }
-  }  
-}
-
-function getOperandValue(operand) {
-  if (isObject(operand)) {
-    return `'${JSON.stringify(operand)}'`
-  } else if (isNumber(operand)) {
-    return operand
-  } else { // string
-    return `'${operand}'`
   }
 }
 
