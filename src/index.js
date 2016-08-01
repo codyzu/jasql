@@ -19,7 +19,6 @@ export default class Jasql {
   constructor (opts) {
     let options = defaults({}, opts, DEFAULT_OPTIONS)
     this.dbOptions = options.db
-    this.db = knex(options.db)
     this.tableName = options.tableName
     this.id = options.idName
     this.jsonColName = 'doc'
@@ -28,6 +27,8 @@ export default class Jasql {
   }
 
   initialize () {
+    this.db = knex(this.dbOptions)
+
     return this.db.schema
       .hasTable(this.tableName)
       .then((exists) => {

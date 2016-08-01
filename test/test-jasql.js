@@ -2,6 +2,8 @@ import test from 'blue-tape'
 import mkdir from 'mkdirp-promise'
 import {dirname} from 'path'
 import testCrudl from './integration/test-crudl'
+import testQuery from './integration/test-query'
+import Jasql from '../src'
 
 const TEST_DATABASE = 'target/test.sqlite'
 
@@ -40,10 +42,23 @@ const JASQL_OPTIONS_MYSQL = {
 
 test('SQLITE3', (fixture) => {
   return mkdir(dirname(TEST_DATABASE))
-    .then(() => testCrudl(fixture, JASQL_OPTIONS_SQLITE3))
+    .then(() => testDatabase(fixture, JASQL_OPTIONS_SQLITE3))
 })
 
-test('POSTGRES', {skip: false}, (fixture) => testCrudl(fixture, JASQL_OPTIONS_PG))
+test('POSTGRES', {skip: false}, (fixture) => testDatabase(fixture, JASQL_OPTIONS_PG))
 
-test('MYSQL', {skip: false}, (fixture) => testCrudl(fixture, JASQL_OPTIONS_MYSQL))
+test('MYSQL', {skip: false}, (fixture) => testDatabase(fixture, JASQL_OPTIONS_MYSQL))
 
+function testDatabase (testFixture, jasqlOptions) {
+  let jasql
+
+  testFixture.test('setup: create Jasql instance', (t) => {
+    jasql = new Jasql(jasqlOptions)
+    return jasql.initialize()
+  })
+
+  testFixture.test('CRUDL', (t) => testCrudl(t, jasql, jasqlOptions))
+  testFixture.test('query', {skip: true}, (t) => testQuery(t, jasql))
+
+  testFixture.test('teardown: destroy Jasql instance', (t) => jasql.destroy())
+}

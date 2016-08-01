@@ -1,15 +1,10 @@
-import test from 'blue-tape'
 import Jasql from '../../src'
 import {DocumentNotFoundError, DatabaseError} from '../../src/errors'
 import {isValid} from 'shortid'
+import * as utils from './utils'
 
-export default function testCrudl(testFixture, jasqlOptions) {
-  let jasql
-
-  testFixture.test('setup', (t) => {
-    jasql = new Jasql(jasqlOptions)
-    return jasql.initialize()
-  })
+export default function testCrudl(testFixture, jasql, jasqlOptions) {
+  const deleteAllRows = () => utils.deleteAllRows(jasql)
 
   testFixture.test('create returns the created document with an added _id', (t) => {
     const doc = {
@@ -227,119 +222,7 @@ export default function testCrudl(testFixture, jasqlOptions) {
   testFixture.test('initialize creates the table if it does not exist', (t) => {
     return jasql.db.schema.dropTable(jasql.tableName)
       .then(() => jasql.destroy())
-      .then(() => {
-        jasql = new Jasql(jasqlOptions)
-      })
       .then(() => jasql.initialize())
       .then(() => t.pass('sucessfully re-initialize'))
   })
-
-  testFixture.test('search', {skip: true}, (searchFixture) => {
-    const testDocs = [
-      {
-        name: 'cody',
-        status: 'A',
-        address: {
-          city: 'Annecy'
-        },
-        age: 36
-      },
-      {
-        name: 'brian',
-        status: 'A',
-        address: {
-          city: 'Paris'
-        },
-        age: 43
-      },
-      {
-        name: 'sarah',
-        status: 'B',
-        age: 16
-      }
-    ]
-
-    searchFixture.test('setup: add test docs', (t) => {
-      const createPromises = testDocs.map((doc) => jasql.create(doc))
-      return Promise.all(createPromises)
-    })
-
-    searchFixture.test('single depth equality', (t) => {
-      return jasql.list({
-        search: {name: 'cody'}
-      })
-      .then((docs) => {
-        t.equal(docs.length, 1, 'returns 1 document')
-        t.equal(docs[0].name, 'cody', 'return document with name cody')
-      })
-    })
-
-    searchFixture.test('nested object equality', (t) => {
-      return jasql.list({
-        search: {address: {city: 'Annecy'}}
-      })
-      .then((docs) => {
-        t.equal(docs.length, 1, 'returns 1 document')
-        t.equal(docs[0].name, 'cody', 'return document with name cody')
-      })
-    })
-
-    searchFixture.test('and equality explicit', (t) => {
-      return jasql.list({
-        search: {$and: [{status: 'A'}, {age: 43}]}
-      })
-      .then((docs) => {
-        t.equal(docs.length, 1, 'returns 1 document')
-        t.equal(docs[0].name, 'brian', 'return document with name brian')
-      })
-    })
-
-    searchFixture.test('and equality implicit', (t) => {
-      return jasql.list({
-        search: {status: 'A', age: 43}
-      })
-      .then((docs) => {
-        t.equal(docs.length, 1, 'returns 1 document')
-        t.equal(docs[0].name, 'brian', 'return document with name brian')
-      })
-    })
-
-    searchFixture.test('or operator', (t) => {
-      return jasql.list({
-        search: {$or: [{name: 'cody'}, {status: 'B'}]}
-      })
-      .then((docs) => {
-        t.equal(docs.length, 2, 'returns 2 documents')
-        console.log(docs.map((d) => d.name))
-        t.equal(docs.map((d) => d.name).indexOf('cody') > -1, true, 'returns 1 document with name cody')
-        t.equal(docs.map((d) => d.name).indexOf('sarah') > -1, true, 'returns 1 document with name sarah')
-      })
-    })
-
-    searchFixture.test('$lt operator', (t) => {
-      return jasql.list({
-        search: {age: {$lt: 30}}
-      })
-      .then((docs) => {
-        t.equal(docs.length, 1, 'returns 1 document')
-        t.equal(docs[0].name, 'sarah', 'return document with name sarah')
-      })
-    })
-
-    searchFixture.test('$gt operator', (t) => {
-      return jasql.list({
-        search: {age: {$gt: 40}}
-      })
-      .then((docs) => {
-        t.equal(docs.length, 1, 'returns 1 document')
-        t.equal(docs[0].name, 'brian', 'return document with name brian')
-      })
-    })
-  })
-
-  testFixture.test('teardown', (t) => jasql.destroy())
-
-  function deleteAllRows () {
-    return jasql.db(jasql.tableName).del()
-  }
 }
