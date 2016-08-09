@@ -45,9 +45,9 @@ test('SQLITE3', (fixture) => {
     .then(() => testDatabase(fixture, JASQL_OPTIONS_SQLITE3))
 })
 
-test('POSTGRES', {skip: false}, (fixture) => testDatabase(fixture, JASQL_OPTIONS_PG))
+test('POSTGRES', {skip: true}, (fixture) => testDatabase(fixture, JASQL_OPTIONS_PG))
 
-test('MYSQL', {skip: false}, (fixture) => testDatabase(fixture, JASQL_OPTIONS_MYSQL))
+test('MYSQL', {skip: true}, (fixture) => testDatabase(fixture, JASQL_OPTIONS_MYSQL))
 
 function testDatabase (testFixture, jasqlOptions) {
   let jasql
@@ -58,7 +58,7 @@ function testDatabase (testFixture, jasqlOptions) {
   })
 
   testFixture.test('CRUDL', (t) => testCrudl(t, jasql, jasqlOptions))
-  testFixture.test('query', {skip: true}, (t) => testQuery(t, jasql))
+  testFixture.test('query', {skip: false}, (t) => testQuery(t, jasql))
 
   testFixture.test('teardown: destroy Jasql instance', (t) => jasql.destroy())
 }

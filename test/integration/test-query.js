@@ -6,7 +6,8 @@ export default function testQuery(testFixture, jasql) {
       address: {
         city: 'Annecy'
       },
-      age: 36
+      age: 36,
+      tags: ['a', 'b', 'c']
     },
     {
       name: 'brian',
@@ -14,12 +15,14 @@ export default function testQuery(testFixture, jasql) {
       address: {
         city: 'Paris'
       },
-      age: 43
+      age: 43,
+      tags: ['a', 'b']
     },
     {
       name: 'sarah',
       status: 'B',
-      age: 16
+      age: 16,
+      tags: []
     }]
 
   testFixture.test('setup: add test docs', (t) => {
@@ -96,6 +99,17 @@ export default function testQuery(testFixture, jasql) {
     .then((docs) => {
       t.equal(docs.length, 1, 'returns 1 document')
       t.equal(docs[0].name, 'brian', 'return document with name brian')
+    })
+  })
+
+  testFixture.test('test array contains value', (t) => {
+    return jasql.list({
+      search: {'tags': 'b'}
+    })
+    .then((docs) => {
+      t.equal(docs.length, 2, 'returns 2 documents')
+      t.equal(docs.map((d) => d.name).indexOf('cody') > -1, true, 'returns 1 document with name cody')
+      t.equal(docs.map((d) => d.name).indexOf('brian') > -1, true, 'returns 1 document with name sarah')
     })
   })
 }
