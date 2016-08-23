@@ -3,7 +3,7 @@ import {DocumentNotFoundError, DatabaseError} from '../../src/errors'
 import {isValid} from 'shortid'
 import * as utils from './utils'
 
-export default function testCrudl(testFixture, jasql, jasqlOptions) {
+export default function testCrudl (testFixture, jasql, jasqlOptions) {
   const deleteAllRows = () => utils.deleteAllRows(jasql)
 
   testFixture.test('create returns the created document with an added _id', (t) => {

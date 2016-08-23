@@ -1,4 +1,4 @@
-export default function testQuery(testFixture, jasql) {
+export default function testQuery (testFixture, jasql) {
   const testDocs = [
     {
       name: 'cody',
