@@ -79,8 +79,9 @@ export default class Jasql {
   list (opts) {
     // get all with id
     const query = this.db
-      .select(this.jsonColName)
-      .from(this.tableName)
+      .distinct(this.jsonColName)
+      // .select()
+      .from(knex.raw(`??, json_tree(??)`, [this.tableName, `${this.tableName}.${this.jsonColName}`]))
 
     // if an id is included, add the 'where like' clause
     if (opts && opts.id) {
@@ -93,7 +94,7 @@ export default class Jasql {
 
     // add the 'order by' clause
     const desc = opts && opts.desc
-    query.orderBy(this.idColName, desc ? 'DESC' : 'ASC')
+    query.orderBy(`${this.tableName}.${this.idColName}`, desc ? 'DESC' : 'ASC')
 
     return query
       .map((row) => this._rowToDocument(row))
@@ -138,7 +139,8 @@ export default class Jasql {
   }
 
   _buildSearchClauses (query, search) {
-    const p = parseQuery((p) => `json_extract(${this.jsonColName}, '$.${p}')`, search)
+    // const p = parseQuery((p) => `json_extract(${this.jsonColName}, '$.${p}')`, search)
+    const p = parseQuery((p) => `json_tree.fullkey = $.${p} json_extract(${this.jsonColName}, '$.${p}')`, search)
     console.log('PARSE:', p)
     query.whereRaw(p)
   }
