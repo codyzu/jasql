@@ -3,6 +3,7 @@ import {generate as shortId} from 'shortid'
 import {defaultsDeep as defaults, get} from 'lodash'
 import {DocumentNotFoundError, DatabaseError} from './errors'
 import parseQuery from './query'
+import sqlLiteQuery from './query-sqlite'
 
 const DEFAULT_OPTIONS = {
   db: {

@@ -1,4 +1,4 @@
-import {isString, isPlainObject as isObject, isNumber} from 'lodash'
+import {isPlainObject as isObject, isNumber} from 'lodash'
 
 const queryOperators = {
   $eq: (j, l, r) => `${j(l)} = ${getOperandValue(r)}`,
