@@ -139,10 +139,11 @@ export default class Jasql {
   }
 
   _buildSearchClauses (query, search) {
+    sqlLiteQuery(search, this.db, query)
     // const p = parseQuery((p) => `json_extract(${this.jsonColName}, '$.${p}')`, search)
-    const p = parseQuery((p) => `json_tree.fullkey = $.${p} json_extract(${this.jsonColName}, '$.${p}')`, search)
-    console.log('PARSE:', p)
-    query.whereRaw(p)
+    // const p = parseQuery((p) => `json_tree.fullkey = $.${p} json_extract(${this.jsonColName}, '$.${p}')`, search)
+    // console.log('PARSE:', p)
+    // query.whereRaw(p)
   }
 
   _isPostgres () {

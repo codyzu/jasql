@@ -1,4 +1,8 @@
+import * as utils from './utils'
+
 export default function testQuery (testFixture, jasql) {
+  const deleteAllRows = () => utils.deleteAllRows(jasql)
+
   const testDocs = [
     {
       name: 'cody',
@@ -26,8 +30,11 @@ export default function testQuery (testFixture, jasql) {
     }]
 
   testFixture.test('setup: add test docs', (t) => {
-    const createPromises = testDocs.map((doc) => jasql.create(doc))
-    return Promise.all(createPromises)
+    return deleteAllRows()
+      .then(() => {
+        const createPromises = testDocs.map((doc) => jasql.create(doc))
+        return Promise.all(createPromises)
+      })
   })
 
   testFixture.test('single depth equality', (t) => {

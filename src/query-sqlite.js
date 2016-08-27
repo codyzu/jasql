@@ -1,13 +1,17 @@
 import {isPlainObject as isObject, isNumber} from 'lodash'
 
 const queryOperators = {
-  $eq: (sql, path, value) => sql.raw('json_tree.fullkey = ? AND json_tree.value = ?', [`$.${path}`, value])
+  $eq: (sql, path, value) => {
+    console.log('PATH:', `$.${path}`)
+    console.log('VAULE:', getOperandValue(value))
+    return sql.raw('json_tree.fullkey = ? AND json_tree.value = ?', [`$.${path}`, getOperandValue(value)])}
   // $lt: (sql, path, value) => `${j(field)} < ${getOperandValue(value)}`,
   // $gt: (sql, path, value) => `${j(field)} > ${getOperandValue(value)}`
 }
 
 const logicalOperators = {
   $and: (sql, exps) => exps.reduce((prev, cur, index) => {
+    console.log('AND')
     const currSql = parseSearchEntry(sql, cur).wrap('(', ')')
 
     if (prev) {
@@ -20,22 +24,24 @@ const logicalOperators = {
   // $or: (j, exps) => exps.map((e) => `(${parseSearchEntry(j, e)})`).join(' or ')
 }
 
-export default function parseSearch (query, sql, jsonColName) {
+export default function parseSearch (query, sql, curQuery) {
   const s = Object.keys(query).length > 1 ? {$and: Object.keys(query).map((k) => {
     const o = {}
     o[k] = query[k]
     return o
   })} : query
 
-  console.log('SEARCH:', s)
-  sql.from('json_tree(jsonColName)')
+  // console.log('SEARCH:', s)
+  // sql.from('json_tree(jsonColName)')
 
-  return parseSearchEntry(sql, s)
+  const whereRaw = parseSearchEntry(sql, s)
+  curQuery.where(whereRaw)
 }
 
 function parseSearchEntry (sql, query) {
   for (let key in query) {
     if (key in logicalOperators) {
+      console.log('LOGICAL:', key)
       // logical operator: { $operator: [exp1, exp2, ...]}
 
       const operator = key
@@ -54,7 +60,7 @@ function parseSearchEntry (sql, query) {
       }
 
       // implied equals: { field1: value1} or { field1: {nested: object}
-
+      console.log('IMPLIED EQUALS')
       return queryOperators.$eq(sql, field, query[key])
     }
   }
@@ -62,11 +68,11 @@ function parseSearchEntry (sql, query) {
 
 function getOperandValue (operand) {
   if (isObject(operand)) {
-    return `'${JSON.stringify(operand)}'`
+    return JSON.stringify(operand)
   } else if (isNumber(operand)) {
     return operand
   } else { // string
-    return `'${operand}'`
+    return operand
   }
 }
 
