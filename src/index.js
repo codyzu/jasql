@@ -89,7 +89,7 @@ export default class Jasql {
     }
 
     if (opts && opts.search) {
-      this._buildSearchClauses(query, opts.search)
+      this._buildSearchClauses(opts.search)
     }
 
     // add the 'order by' clause
@@ -138,8 +138,8 @@ export default class Jasql {
     return JSON.parse(row[this.jsonColName])
   }
 
-  _buildSearchClauses (query, search) {
-    sqlLiteQuery(search, this.db, query)
+  _buildSearchClauses (search) {
+    sqlLiteQuery(search, this.db)
     // const p = parseQuery((p) => `json_extract(${this.jsonColName}, '$.${p}')`, search)
     // const p = parseQuery((p) => `json_tree.fullkey = $.${p} json_extract(${this.jsonColName}, '$.${p}')`, search)
     // console.log('PARSE:', p)
