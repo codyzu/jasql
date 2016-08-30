@@ -89,7 +89,7 @@ class QueryContext {
 
   _fromTablesClause () {
     return {
-      sql: `?? as ??, json_tree(??) as ??`,
+      sql: '?? as ??, json_tree(??) as ??',
       bindings: [
         this.tableName, this._currentJasqlTableName(),
         `${this._currentJasqlTableName()}.${this.jsonColName}`, this._currentJsonTableName()

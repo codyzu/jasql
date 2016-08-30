@@ -2,7 +2,6 @@ import knex from 'knex'
 import {generate as shortId} from 'shortid'
 import {defaultsDeep as defaults, get} from 'lodash'
 import {DocumentNotFoundError, DatabaseError} from './errors'
-import parseQuery from './query'
 import sqlLiteQuery from './query-sqlite'
 
 const DEFAULT_OPTIONS = {
@@ -84,48 +83,25 @@ export default class Jasql {
     } else {
       // get all with id
       query = this.db
-        .distinct(this.jsonColName)
-        .distinct('')
-        // .select()
-        .from(knex.raw(`??, json_tree(??)`, [this.tableName, `${this.tableName}.${this.jsonColName}`]))
+        .distinct(`jasql0.${this.jsonColName}`)
+        .from(knex.raw('?? as ??, json_tree(??)', [
+          this.tableName, 'jasql0',
+          `jasql0.${this.jsonColName}`
+        ]))
 
       // if an id is included, add the 'where like' clause
       if (opts && opts.id) {
-        query.where(this.idColName, 'like', opts.id)
+        query.where(`jasql0.${this.idColName}`, 'like', opts.id)
       }
-
-      // add the 'order by' clause
-      const desc = opts && opts.desc
-      query.orderBy(`${this.tableName}.${this.idColName}`, desc ? 'DESC' : 'ASC')
     }
+
+    // add the 'order by' clause
+    const desc = opts && opts.desc
+    query.orderBy(`jasql0.${this.idColName}`, desc ? 'DESC' : 'ASC')
 
     return query
       .map((row) => this._rowToDocument(row))
       .catch(handleDbError)
-
-    // // get all with id
-    // const query = this.db
-    //   .distinct(this.jsonColName)
-    //   .distinct('')
-    //   // .select()
-    //   .from(knex.raw(`??, json_tree(??)`, [this.tableName, `${this.tableName}.${this.jsonColName}`]))
-
-    // // if an id is included, add the 'where like' clause
-    // if (opts && opts.id) {
-    //   query.where(this.idColName, 'like', opts.id)
-    // }
-
-    // if (opts && opts.search) {
-    //   this._buildSearchClauses(opts.search)
-    // }
-
-    // // add the 'order by' clause
-    // const desc = opts && opts.desc
-    // query.orderBy(`${this.tableName}.${this.idColName}`, desc ? 'DESC' : 'ASC')
-
-    // return query
-    //   .map((row) => this._rowToDocument(row))
-    //   .catch(handleDbError)
   }
 
   async update (doc) {
@@ -163,14 +139,6 @@ export default class Jasql {
     }
 
     return JSON.parse(row[this.jsonColName])
-  }
-
-  _buildSearchClauses (search) {
-    sqlLiteQuery(search, this.db)
-    // const p = parseQuery((p) => `json_extract(${this.jsonColName}, '$.${p}')`, search)
-    // const p = parseQuery((p) => `json_tree.fullkey = $.${p} json_extract(${this.jsonColName}, '$.${p}')`, search)
-    // console.log('PARSE:', p)
-    // query.whereRaw(p)
   }
 
   _isPostgres () {
