@@ -77,28 +77,55 @@ export default class Jasql {
   }
 
   list (opts) {
-    // get all with id
-    const query = this.db
-      .distinct(this.jsonColName)
-      // .select()
-      .from(knex.raw(`??, json_tree(??)`, [this.tableName, `${this.tableName}.${this.jsonColName}`]))
-
-    // if an id is included, add the 'where like' clause
-    if (opts && opts.id) {
-      query.where(this.idColName, 'like', opts.id)
-    }
+    let query
 
     if (opts && opts.search) {
-      this._buildSearchClauses(opts.search)
-    }
+      query = sqlLiteQuery(opts.search, this.db)
+    } else {
+      // get all with id
+      query = this.db
+        .distinct(this.jsonColName)
+        .distinct('')
+        // .select()
+        .from(knex.raw(`??, json_tree(??)`, [this.tableName, `${this.tableName}.${this.jsonColName}`]))
 
-    // add the 'order by' clause
-    const desc = opts && opts.desc
-    query.orderBy(`${this.tableName}.${this.idColName}`, desc ? 'DESC' : 'ASC')
+      // if an id is included, add the 'where like' clause
+      if (opts && opts.id) {
+        query.where(this.idColName, 'like', opts.id)
+      }
+
+      // add the 'order by' clause
+      const desc = opts && opts.desc
+      query.orderBy(`${this.tableName}.${this.idColName}`, desc ? 'DESC' : 'ASC')
+    }
 
     return query
       .map((row) => this._rowToDocument(row))
       .catch(handleDbError)
+
+    // // get all with id
+    // const query = this.db
+    //   .distinct(this.jsonColName)
+    //   .distinct('')
+    //   // .select()
+    //   .from(knex.raw(`??, json_tree(??)`, [this.tableName, `${this.tableName}.${this.jsonColName}`]))
+
+    // // if an id is included, add the 'where like' clause
+    // if (opts && opts.id) {
+    //   query.where(this.idColName, 'like', opts.id)
+    // }
+
+    // if (opts && opts.search) {
+    //   this._buildSearchClauses(opts.search)
+    // }
+
+    // // add the 'order by' clause
+    // const desc = opts && opts.desc
+    // query.orderBy(`${this.tableName}.${this.idColName}`, desc ? 'DESC' : 'ASC')
+
+    // return query
+    //   .map((row) => this._rowToDocument(row))
+    //   .catch(handleDbError)
   }
 
   async update (doc) {

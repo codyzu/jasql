@@ -14,6 +14,7 @@ const logicalOperators = {
     const currSql = `(${parseSearchEntry(sql, exp, ctx)})`
     console.log('AND:', currSql)
     if (index < exps.length - 1) {
+      console.log('INCREMENT TABLE')
       ctx.addTable()
     }
 
@@ -22,31 +23,35 @@ const logicalOperators = {
   // $or: (j, exps) => exps.map((e) => `(${parseSearchEntry(j, e)})`).join(' or ')
 }
 
-export default function parseSearch (query, sql, curQuery) {
-  const s = Object.keys(query).length > 1 ? {$and: Object.keys(query).map((k) => {
+export default function parseSearch (search, sql) {
+  const s = Object.keys(search).length > 1 ? {$and: Object.keys(search).map((k) => {
     const o = {}
-    o[k] = query[k]
+    o[k] = search[k]
     return o
-  })} : query
+  })} : search
 
   // console.log('SEARCH:', s)
   // sql.from('json_tree(jsonColName)')
 
   const ctx = new QueryContext()
-  const bindings = {}
   const whereRaw = parseSearchEntry(sql, s, ctx)
   console.log('RAW:', whereRaw)
   console.log('BINDINGS', ctx.bindings)
   console.log('TABLE COUNT:', ctx.tableCount)
+
+  const query = sql
+    .distinct('jasql0.doc')
+
   for (let index = 0; index < ctx.tableCount; index++) {
     console.log('JOIN')
     if (index === 0) {
-      curQuery.from(sql.raw(`?? as ??, json_tree(??) as ??`, ['JASQL', `jasql${index}`, 'JASQL.doc', `json${index}`]))
+      query.from(sql.raw(`?? as ??, json_tree(??) as ??`, ['JASQL', `jasql${index}`, `jasql${index}.doc`, `json${index}`]))
     } else {
-      curQuery.joinRaw(`JASQL as jasql${index}, json_tree(JASQL.doc) as json${index} ON jasql${index - 1} = jasql${index}`)
+      query.innerJoin(sql.raw(`?? as ??, json_tree(??) as ?? ON ?? = ??`, ['JASQL', `jasql${index}`, `jasql${index}.doc`, `json${index}`, `jasql${index - 1}.id`, `jasql${index}.id`]))
     }
   }
-  curQuery.where(sql.raw(whereRaw, ctx.bindings))
+  query.where(sql.raw(whereRaw, ctx.bindings))
+  return query
 }
 
 function parseSearchEntry (sql, query, ctx) {
@@ -101,7 +106,7 @@ class QueryContext {
   constructor () {
     this.bindings = {}
     this.tableCount = 1
-    this.tableIndex = 0
+    // this.tableIndex = 0
   }
 
   query (path, operator, value) {
@@ -122,7 +127,8 @@ class QueryContext {
   }
 
   currentTable () {
-    return `json${this.tableIndex}`
+    // return `json${this.tableIndex}`
+    return `json${this.tableCount - 1}`
   }
 
   addTable () {
