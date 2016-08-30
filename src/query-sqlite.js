@@ -1,18 +1,14 @@
 import {isPlainObject as isObject, isNumber} from 'lodash'
 
 const queryOperators = {
-  $eq: (path, value, ctx) => {
-    return ctx.whereQuery(path, '=', value)
-  }
-  // $lt: (sql, path, value) => `${j(field)} < ${getOperandValue(value)}`,
-  // $gt: (sql, path, value) => `${j(field)} > ${getOperandValue(value)}`
+  $eq: (path, value, ctx) => ctx.whereQuery(path, '=', value),
+  $lt: (path, value, ctx) => ctx.whereQuery(path, '<', value),
+  $gt: (path, value, ctx) => ctx.whereQuery(path, '>', value)
 }
 
 const logicalOperators = {
-  // $and: (sql, exps) => exps.reduce((prev, cur, index) => {
-  $and: (exps, ctx) => ctx.whereLogical('AND', exps, 'innerJoin'),
-  // $or: (exps, ctx) => ctx.whereLogical('OR', exps, 'fullOuterJoin')
-  // $or: (j, exps) => exps.map((e) => `(${parseSearchEntry(j, e)})`).join(' or ')
+  $and: (exps, ctx) => ctx.whereLogical('AND', exps),
+  $or: (exps, ctx) => ctx.whereLogical('OR', exps)
 }
 
 export default function parseSearch (search, sql, tableName, jsonColName, idColName) {
@@ -105,11 +101,11 @@ class QueryContext {
     const valueBinding = this.addBinding(getOperandValue(value))
     const pathColumn = this.addBinding(`${this.currentTable()}.fullkey`)
     const valueColumn = this.addBinding(`${this.currentTable()}.value`)
-    const sql = `:${pathColumn}: ${operator} '$.${path}' AND :${valueColumn}: = :${valueBinding}`
+    const sql = `:${pathColumn}: LIKE '$.${path.replace('[*]', '[%]')}' AND :${valueColumn}: ${operator} :${valueBinding}`
     return sql
   }
 
-  whereLogical (operator, expressions, joinOperation) {
+  whereLogical (operator, expressions) {
     const ctx = this
     return expressions.map((exp, index) => {
       const currSql = `(${parseSearchEntry(exp, ctx)})`
@@ -117,7 +113,7 @@ class QueryContext {
 
       // only join a new table if we are not at the last index
       if (index < expressions.length - 1) {
-        ctx._joinTable(joinOperation)
+        ctx._joinTable()
       }
 
       return currSql
@@ -143,7 +139,7 @@ class QueryContext {
     const fromClause = this._fromTablesClause()
 
     // join another table
-    this.query[joinOperation](this.sql.raw(`${fromClause.sql} ON ?? = ??`, [
+    this.query.innerJoin(this.sql.raw(`${fromClause.sql} ON ?? = ??`, [
       ...fromClause.bindings,
       `${currentJasqlTable}.${this.idColName}`, `${this._currentJasqlTableName()}.${this.idColName}`
     ]))
