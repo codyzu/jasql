@@ -10,7 +10,8 @@ const queryOperators = {
 
 const logicalOperators = {
   // $and: (sql, exps) => exps.reduce((prev, cur, index) => {
-  $and: (exps, ctx) => ctx.whereLogical('AND', exps)
+  $and: (exps, ctx) => ctx.whereLogical('AND', exps, 'innerJoin'),
+  // $or: (exps, ctx) => ctx.whereLogical('OR', exps, 'fullOuterJoin')
   // $or: (j, exps) => exps.map((e) => `(${parseSearchEntry(j, e)})`).join(' or ')
 }
 
@@ -108,7 +109,7 @@ class QueryContext {
     return sql
   }
 
-  whereLogical (operator, expressions) {
+  whereLogical (operator, expressions, joinOperation) {
     const ctx = this
     return expressions.map((exp, index) => {
       const currSql = `(${parseSearchEntry(exp, ctx)})`
@@ -116,7 +117,7 @@ class QueryContext {
 
       // only join a new table if we are not at the last index
       if (index < expressions.length - 1) {
-        ctx.addTable()
+        ctx._joinTable(joinOperation)
       }
 
       return currSql
@@ -133,7 +134,7 @@ class QueryContext {
     return `json${this.joins}`
   }
 
-  addTable () {
+  _joinTable (joinOperation) {
     console.log('JOINING')
     const currentJasqlTable = this._currentJasqlTableName()
 
@@ -142,7 +143,7 @@ class QueryContext {
     const fromClause = this._fromTablesClause()
 
     // join another table
-    this.query.innerJoin(this.sql.raw(`${fromClause.sql} ON ?? = ??`, [
+    this.query[joinOperation](this.sql.raw(`${fromClause.sql} ON ?? = ??`, [
       ...fromClause.bindings,
       `${currentJasqlTable}.${this.idColName}`, `${this._currentJasqlTableName()}.${this.idColName}`
     ]))
