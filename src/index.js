@@ -80,7 +80,7 @@ export default class Jasql {
     let query
 
     if (opts && opts.search) {
-      query = sqlLiteQuery(opts.search, this.db)
+      query = sqlLiteQuery(opts.search, this.db, this.tableName, this.jsonColName, this.idColName)
     } else {
       // get all with id
       query = this.db

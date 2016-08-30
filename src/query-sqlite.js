@@ -1,8 +1,8 @@
 import {isPlainObject as isObject, isNumber} from 'lodash'
 
 const queryOperators = {
-  $eq: (sql, path, value, ctx) => {
-    return ctx.query(path, '=', value)
+  $eq: (path, value, ctx) => {
+    return ctx.whereQuery(path, '=', value)
   }
   // $lt: (sql, path, value) => `${j(field)} < ${getOperandValue(value)}`,
   // $gt: (sql, path, value) => `${j(field)} > ${getOperandValue(value)}`
@@ -10,51 +10,24 @@ const queryOperators = {
 
 const logicalOperators = {
   // $and: (sql, exps) => exps.reduce((prev, cur, index) => {
-  $and: (sql, exps, ctx) => exps.map((exp, index) => {
-    const currSql = `(${parseSearchEntry(sql, exp, ctx)})`
-    console.log('AND:', currSql)
-    if (index < exps.length - 1) {
-      console.log('INCREMENT TABLE')
-      ctx.addTable()
-    }
-
-    return currSql
-  }).join(' AND ')
+  $and: (exps, ctx) => ctx.whereLogical('AND', exps)
   // $or: (j, exps) => exps.map((e) => `(${parseSearchEntry(j, e)})`).join(' or ')
 }
 
-export default function parseSearch (search, sql) {
+export default function parseSearch (search, sql, tableName, jsonColName, idColName) {
   const s = Object.keys(search).length > 1 ? {$and: Object.keys(search).map((k) => {
     const o = {}
     o[k] = search[k]
     return o
   })} : search
 
-  // console.log('SEARCH:', s)
-  // sql.from('json_tree(jsonColName)')
+  const ctx = new QueryContext(sql, tableName, jsonColName, idColName)
+  const whereRaw = parseSearchEntry(s, ctx)
 
-  const ctx = new QueryContext()
-  const whereRaw = parseSearchEntry(sql, s, ctx)
-  console.log('RAW:', whereRaw)
-  console.log('BINDINGS', ctx.bindings)
-  console.log('TABLE COUNT:', ctx.tableCount)
-
-  const query = sql
-    .distinct('jasql0.doc')
-
-  for (let index = 0; index < ctx.tableCount; index++) {
-    console.log('JOIN')
-    if (index === 0) {
-      query.from(sql.raw(`?? as ??, json_tree(??) as ??`, ['JASQL', `jasql${index}`, `jasql${index}.doc`, `json${index}`]))
-    } else {
-      query.innerJoin(sql.raw(`?? as ??, json_tree(??) as ?? ON ?? = ??`, ['JASQL', `jasql${index}`, `jasql${index}.doc`, `json${index}`, `jasql${index - 1}.id`, `jasql${index}.id`]))
-    }
-  }
-  query.where(sql.raw(whereRaw, ctx.bindings))
-  return query
+  return ctx.finalize(whereRaw)
 }
 
-function parseSearchEntry (sql, query, ctx) {
+function parseSearchEntry (query, ctx) {
   for (let key in query) {
     if (key in logicalOperators) {
       console.log('LOGICAL:', key)
@@ -62,7 +35,7 @@ function parseSearchEntry (sql, query, ctx) {
 
       const operator = key
       const expressions = query[key]
-      return logicalOperators[operator](sql, expressions, ctx)
+      return logicalOperators[operator](expressions, ctx)
     } else {
       const field = key
       const value = query[key]
@@ -72,12 +45,12 @@ function parseSearchEntry (sql, query, ctx) {
         // query operator: { field: { $operator: expression }}
         const operator = Object.keys(value)[0]
         const expression = value[operator]
-        return queryOperators[operator](sql, field, expression, ctx)
+        return queryOperators[operator](field, expression, ctx)
       }
 
       // implied equals: { field1: value1} or { field1: {nested: object}
       console.log('IMPLIED EQUALS')
-      return queryOperators.$eq(sql, field, query[key], ctx)
+      return queryOperators.$eq(field, query[key], ctx)
     }
   }
 }
@@ -92,47 +65,95 @@ function getOperandValue (operand) {
   }
 }
 
-// function nextBinding (bindings) {
-//   return `param${Object.keys(bindings).length}`
-// }
-
-// function addBinding(bindings, value) {
-//   const bindingKey = `param${Object.keys(bindings).length}`
-//   bindings[bindingKey] = value
-//   return bindingKey
-// }
-
 class QueryContext {
-  constructor () {
+  constructor (sql, tableName, jsonColName, idColName) {
+    this.sql = sql
+    this.tableName = tableName
+    this.jsonColName = jsonColName
+    this.idColName = idColName
+
     this.bindings = {}
-    this.tableCount = 1
-    // this.tableIndex = 0
+    this.joins = 0
+
+    const fromClause = this._fromTablesClause()
+
+    this.query = sql
+      .distinct(`${this._currentJasqlTableName()}.${this.jsonColName}`)
+      .from(sql.raw(fromClause.sql, fromClause.bindings))
   }
 
-  query (path, operator, value) {
+  _currentJasqlTableName () {
+    return `jasql${this.joins}`
+  }
+
+  _currentJsonTableName () {
+    return `json${this.joins}`
+  }
+
+  _fromTablesClause () {
+    return {
+      sql: `?? as ??, json_tree(??) as ??`,
+      bindings: [
+        this.tableName, this._currentJasqlTableName(),
+        `${this._currentJasqlTableName()}.${this.jsonColName}`, this._currentJsonTableName()
+      ]
+    }
+  }
+
+  whereQuery (path, operator, value) {
     const valueBinding = this.addBinding(getOperandValue(value))
     const pathColumn = this.addBinding(`${this.currentTable()}.fullkey`)
     const valueColumn = this.addBinding(`${this.currentTable()}.value`)
     const sql = `:${pathColumn}: ${operator} '$.${path}' AND :${valueColumn}: = :${valueBinding}`
-    console.log('QUERY SQL:', sql)
     return sql
+  }
+
+  whereLogical (operator, expressions) {
+    const ctx = this
+    return expressions.map((exp, index) => {
+      const currSql = `(${parseSearchEntry(exp, ctx)})`
+      console.log(`OPERATOR ${operator}:`, currSql)
+
+      // only join a new table if we are not at the last index
+      if (index < expressions.length - 1) {
+        ctx.addTable()
+      }
+
+      return currSql
+    }).join(` ${operator} `)
   }
 
   addBinding (value) {
     const bindingKey = `param${Object.keys(this.bindings).length}`
-    console.log('BINDING KEY:', bindingKey)
-    console.log('BINDING VALUE:', value)
     this.bindings[bindingKey] = value
     return bindingKey
   }
 
   currentTable () {
-    // return `json${this.tableIndex}`
-    return `json${this.tableCount - 1}`
+    return `json${this.joins}`
   }
 
   addTable () {
-    this.tableCount += 1
+    console.log('JOINING')
+    const currentJasqlTable = this._currentJasqlTableName()
+
+    this.joins += 1
+
+    const fromClause = this._fromTablesClause()
+
+    // join another table
+    this.query.innerJoin(this.sql.raw(`${fromClause.sql} ON ?? = ??`, [
+      ...fromClause.bindings,
+      `${currentJasqlTable}.${this.idColName}`, `${this._currentJasqlTableName()}.${this.idColName}`
+    ]))
+
     return this.currentTable()
+  }
+
+  finalize (whereRaw) {
+    console.log('WHERE:', whereRaw)
+    console.log('BINDINGS: ', this.bindings)
+    console.log('JOINS:', this.joins)
+    return this.query.whereRaw(whereRaw, this.bindings)
   }
 }
