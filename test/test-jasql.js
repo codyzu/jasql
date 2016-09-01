@@ -40,12 +40,12 @@ const JASQL_OPTIONS_MYSQL = {
   }
 }
 
-test('SQLITE3', (fixture) => {
+test('SQLITE3', {skip: true}, (fixture) => {
   return mkdir(dirname(TEST_DATABASE))
     .then(() => testDatabase(fixture, JASQL_OPTIONS_SQLITE3))
 })
 
-test('POSTGRES', {skip: true}, (fixture) => testDatabase(fixture, JASQL_OPTIONS_PG))
+test('POSTGRES', {skip: false}, (fixture) => testDatabase(fixture, JASQL_OPTIONS_PG))
 
 test('MYSQL', {skip: true}, (fixture) => testDatabase(fixture, JASQL_OPTIONS_MYSQL))
 
@@ -57,7 +57,7 @@ function testDatabase (testFixture, jasqlOptions) {
     return jasql.initialize()
   })
 
-  testFixture.test('CRUDL', {skip: false}, (t) => testCrudl(t, jasql, jasqlOptions))
+  testFixture.test('CRUDL', {skip: true}, (t) => testCrudl(t, jasql, jasqlOptions))
   testFixture.test('query', {skip: false}, (t) => testQuery(t, jasql))
 
   testFixture.test('teardown: destroy Jasql instance', (t) => jasql.destroy())

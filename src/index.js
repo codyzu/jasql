@@ -3,6 +3,7 @@ import {generate as shortId} from 'shortid'
 import {defaultsDeep as defaults, get} from 'lodash'
 import {DocumentNotFoundError, DatabaseError} from './errors'
 import sqlLiteQuery from './query-sqlite'
+import pgQuery from './query-pg'
 
 const DEFAULT_OPTIONS = {
   db: {
@@ -79,7 +80,12 @@ export default class Jasql {
     let query
 
     if (opts && opts.search) {
-      query = sqlLiteQuery(opts.search, this.db, this.tableName, this.jsonColName, this.idColName)
+      const queries = {
+        sqlite3: sqlLiteQuery,
+        pg: pgQuery
+      }
+
+      query = queries[this.dbOptions.client](opts.search, this.db, this.tableName, this.jsonColName, this.idColName)
     } else {
       // get all with id
       query = this.db
