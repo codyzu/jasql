@@ -72,29 +72,8 @@ class QueryContext {
     this.bindings = {}
     this.joins = 0
 
-    const fromClause = this._fromTablesClause()
-
     this.query = sql
-      .distinct(`${this._currentJasqlTableName()}.${this.jsonColName}`)
-      .from(sql.raw(fromClause.sql, fromClause.bindings))
-  }
-
-  _currentJasqlTableName () {
-    return `jasql${this.joins}`
-  }
-
-  _currentJsonTableName () {
-    return `json${this.joins}`
-  }
-
-  _fromTablesClause () {
-    return {
-      sql: '?? as ??, json_tree(??) as ??',
-      bindings: [
-        this.tableName, this._currentJasqlTableName(),
-        `${this._currentJasqlTableName()}.${this.jsonColName}`, this._currentJsonTableName()
-      ]
-    }
+      .distinct(`${this.tableName}.${this.jsonColName}`)
   }
 
   whereQuery (path, operator, value) {
@@ -130,27 +109,25 @@ class QueryContext {
     return `json${this.joins}`
   }
 
-  _joinTable (joinOperation) {
-    console.log('JOINING')
-    const currentJasqlTable = this._currentJasqlTableName()
-
+  _joinTable () {
     this.joins += 1
-
-    const fromClause = this._fromTablesClause()
-
-    // join another table
-    this.query.innerJoin(this.sql.raw(`${fromClause.sql} ON ?? = ??`, [
-      ...fromClause.bindings,
-      `${currentJasqlTable}.${this.idColName}`, `${this._currentJasqlTableName()}.${this.idColName}`
-    ]))
-
-    return this.currentTable()
   }
 
   finalize (whereRaw) {
     console.log('WHERE:', whereRaw)
     console.log('BINDINGS: ', this.bindings)
     console.log('JOINS:', this.joins)
-    return this.query.whereRaw(whereRaw, this.bindings)
+
+    // add a json table using json_tree for each join
+    const fromRaw = [...Array(this.joins + 1).keys()]
+      .reduce((raw, index) => {
+        raw.sql = `${raw.sql}, json_tree(??) as ??`
+        raw.bindings = [...raw.bindings, `${this.tableName}.${this.jsonColName}`, `json${index}`]
+        return raw
+      }, {sql: '??', bindings: [this.tableName]})
+
+    return this.query
+      .from(this.sql.raw(fromRaw.sql, fromRaw.bindings))
+      .whereRaw(whereRaw, this.bindings)
   }
 }

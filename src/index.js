@@ -83,21 +83,21 @@ export default class Jasql {
     } else {
       // get all with id
       query = this.db
-        .distinct(`jasql0.${this.jsonColName}`)
-        .from(knex.raw('?? as ??, json_tree(??)', [
-          this.tableName, 'jasql0',
-          `jasql0.${this.jsonColName}`
+        .distinct(`${this.tableName}.${this.jsonColName}`)
+        .from(knex.raw('??, json_tree(??)', [
+          this.tableName,
+          `${this.tableName}.${this.jsonColName}`
         ]))
 
       // if an id is included, add the 'where like' clause
       if (opts && opts.id) {
-        query.where(`jasql0.${this.idColName}`, 'like', opts.id)
+        query.where(`${this.tableName}.${this.idColName}`, 'like', opts.id)
       }
     }
 
     // add the 'order by' clause
     const desc = opts && opts.desc
-    query.orderBy(`jasql0.${this.idColName}`, desc ? 'DESC' : 'ASC')
+    query.orderBy(`${this.tableName}.${this.idColName}`, desc ? 'DESC' : 'ASC')
 
     return query
       .map((row) => this._rowToDocument(row))
