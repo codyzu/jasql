@@ -73,7 +73,7 @@
     "coveralls": "^2.11.9",
     "delete": "^0.3.2",
     "faucet": "0.0.1",
-    "mkdirp-promise": "^2.0.0",
+    "mkdirp-promise": "^3.0.1",
     "nodemon": "^1.9.2",
     "nyc": "^8.1.0",
     "snazzy": "^4.0.0",
