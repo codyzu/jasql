@@ -69,16 +69,17 @@ export default function testQuery (testFixture, jasql) {
     })
   })
 
-  // testFixture.test('field equality in embedded documents', (t) => {
-  //   return jasql.list({
-  //     search: {'jobs[*].city': {$eq: 'Reno'}}
-  //   })
-  //   .then((docs) => {
-  //     t.equal(docs.length, 2, 'returns 2 documents')
-  //     t.equal(docs.map((d) => d.name).indexOf('cody') > -1, true, 'returns 1 document with name cody')
-  //     t.equal(docs.map((d) => d.name).indexOf('brian') > -1, true, 'returns 1 document with name brian')
-  //   })
-  // })
+  // only working with sqlite3 for the moment
+  testFixture.test('field equality in embedded documents', {skip: jasql.dbOptions !== 'sqlite3'}, (t) => {
+    return jasql.list({
+      search: {'jobs[*].city': {$eq: 'Reno'}}
+    })
+    .then((docs) => {
+      t.equal(docs.length, 2, 'returns 2 documents')
+      t.equal(docs.map((d) => d.name).indexOf('cody') > -1, true, 'returns 1 document with name cody')
+      t.equal(docs.map((d) => d.name).indexOf('brian') > -1, true, 'returns 1 document with name brian')
+    })
+  })
 
   testFixture.test('and equality explicit', (t) => {
     return jasql.list({
