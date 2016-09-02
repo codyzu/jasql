@@ -72,15 +72,28 @@ class QueryContext {
     this.bindings = {}
     this.joins = 0
 
+    this.froms = [`:${this.addBinding(this.tableName)}:`]
+
     this.query = sql
       .distinct(`${this.tableName}.${this.jsonColName}`, `${this.tableName}.${this.idColName}`)
   }
 
   whereQuery (path, operator, value) {
     const jsonColumnBinding = this.addBinding(`${this.tableName}.${this.jsonColName}`)
-    const pathAsObject = path.split('.').join(',')
     const valueBinding = this.addBinding(getOperandValue(value))
-    return `:${jsonColumnBinding}:${isObject(value) ? '#>' : '#>>'}'{${pathAsObject}}' ${operator} :${valueBinding}`
+
+    if (path.endsWith('[*]')) {
+      const aliasBinding = this.addBinding(`jsonArray${this.froms.length}`)
+      this.froms.push(`jsonb_array_elements_text(:${jsonColumnBinding}:#>${this._toPgPath(path.slice(0, '[*]'.length * -1))}) as :${aliasBinding}:`)
+      return `:${aliasBinding}: ${operator} :${valueBinding}`
+    } else {
+      const pathAsObject = this._toPgPath(path)
+      return `:${jsonColumnBinding}:${isObject(value) ? '#>' : '#>>'}${pathAsObject} ${operator} :${valueBinding}`
+    }
+  }
+
+  _toPgPath (jsonPath) {
+    return `'{${jsonPath.split('.').join(',')}}'`
   }
 
   whereLogical (operator, expressions) {
@@ -116,6 +129,7 @@ class QueryContext {
     console.log('WHERE:', whereRaw)
     console.log('BINDINGS: ', this.bindings)
     console.log('JOINS:', this.joins)
+    console.log('FROMS:', this.froms)
 
     // add a json table using json_tree for each join
     // const fromRaw = [...Array(this.joins + 1).keys()]
@@ -125,8 +139,10 @@ class QueryContext {
     //     return raw
     //   }, {sql: '??', bindings: [this.tableName]})
 
+    const fromRawSql = this.froms.join(', ')
+
     return this.query
-      .from(`${this.tableName}`)
+      .from(this.sql.raw(fromRawSql, this.bindings))
       .whereRaw(whereRaw, this.bindings)
   }
 }

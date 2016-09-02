@@ -11,7 +11,12 @@ export default function testQuery (testFixture, jasql) {
         city: 'Annecy'
       },
       jobs: [
-        {city: 'Reno'},
+        {
+          city: 'Reno',
+          organization: {
+            name: 'acme'
+          }
+        },
         {city: 'Incline Village'}
       ],
       age: 36,
@@ -127,14 +132,14 @@ export default function testQuery (testFixture, jasql) {
     })
   })
 
-  // testFixture.test('test array contains value', (t) => {
-  //   return jasql.list({
-  //     search: {'tags[*]': 'b'}
-  //   })
-  //   .then((docs) => {
-  //     t.equal(docs.length, 2, 'returns 2 documents')
-  //     t.equal(docs.map((d) => d.name).indexOf('cody') > -1, true, 'returns 1 document with name cody')
-  //     t.equal(docs.map((d) => d.name).indexOf('brian') > -1, true, 'returns 1 document with name sarah')
-  //   })
-  // })
+  testFixture.test('test array contains value', (t) => {
+    return jasql.list({
+      search: {'tags[*]': 'b'}
+    })
+    .then((docs) => {
+      t.equal(docs.length, 2, 'returns 2 documents')
+      t.equal(docs.map((d) => d.name).indexOf('cody') > -1, true, 'returns 1 document with name cody')
+      t.equal(docs.map((d) => d.name).indexOf('brian') > -1, true, 'returns 1 document with name sarah')
+    })
+  })
 }
