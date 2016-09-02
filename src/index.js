@@ -89,11 +89,8 @@ export default class Jasql {
     } else {
       // get all with id
       query = this.db
-        .distinct(`${this.tableName}.${this.jsonColName}`)
-        .from(knex.raw('??, json_tree(??)', [
-          this.tableName,
-          `${this.tableName}.${this.jsonColName}`
-        ]))
+        .select(`${this.tableName}.${this.jsonColName}`)
+        .from(this.tableName)
 
       // if an id is included, add the 'where like' clause
       if (opts && opts.id) {
