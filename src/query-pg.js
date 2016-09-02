@@ -73,15 +73,14 @@ class QueryContext {
     this.joins = 0
 
     this.query = sql
-      .distinct(`${this.tableName}.${this.jsonColName}`)
+      .distinct(`${this.tableName}.${this.jsonColName}`, `${this.tableName}.${this.idColName}`)
   }
 
   whereQuery (path, operator, value) {
+    const jsonColumnBinding = this.addBinding(`${this.tableName}.${this.jsonColName}`)
+    const pathAsObject = path.split('.').join(',')
     const valueBinding = this.addBinding(getOperandValue(value))
-    const pathColumn = this.addBinding(`${this.currentTable()}.fullkey`)
-    const valueColumn = this.addBinding(`${this.currentTable()}.value`)
-    const sql = `:${pathColumn}: LIKE '$.${path.replace('[*]', '[%]')}' AND :${valueColumn}: ${operator} :${valueBinding}`
-    return sql
+    return `:${jsonColumnBinding}:${isObject(value) ? '#>' : '#>>'}'{${pathAsObject}}' ${operator} :${valueBinding}`
   }
 
   whereLogical (operator, expressions) {
@@ -119,15 +118,15 @@ class QueryContext {
     console.log('JOINS:', this.joins)
 
     // add a json table using json_tree for each join
-    const fromRaw = [...Array(this.joins + 1).keys()]
-      .reduce((raw, index) => {
-        raw.sql = `${raw.sql}, json_tree(??) as ??`
-        raw.bindings = [...raw.bindings, `${this.tableName}.${this.jsonColName}`, `json${index}`]
-        return raw
-      }, {sql: '??', bindings: [this.tableName]})
+    // const fromRaw = [...Array(this.joins + 1).keys()]
+    //   .reduce((raw, index) => {
+    //     raw.sql = `${raw.sql}, json_tree(??) as ??`
+    //     raw.bindings = [...raw.bindings, `${this.tableName}.${this.jsonColName}`, `json${index}`]
+    //     return raw
+    //   }, {sql: '??', bindings: [this.tableName]})
 
     return this.query
-      .from(this.sql.raw(fromRaw.sql, fromRaw.bindings))
+      .from(`${this.tableName}`)
       .whereRaw(whereRaw, this.bindings)
   }
 }

@@ -10,6 +10,10 @@ export default function testQuery (testFixture, jasql) {
       address: {
         city: 'Annecy'
       },
+      jobs: [
+        {city: 'Reno'},
+        {city: 'Incline Village'}
+      ],
       age: 36,
       tags: ['a', 'b', 'c']
     },
@@ -19,6 +23,9 @@ export default function testQuery (testFixture, jasql) {
       address: {
         city: 'Paris'
       },
+      jobs: [
+        {city: 'Reno'}
+      ],
       age: 43,
       tags: ['a', 'b']
     },
@@ -57,66 +64,77 @@ export default function testQuery (testFixture, jasql) {
     })
   })
 
-  testFixture.test('and equality explicit', (t) => {
-    return jasql.list({
-      search: {$and: [{status: 'A'}, {age: 43}]}
-    })
-    .then((docs) => {
-      t.equal(docs.length, 1, 'returns 1 document')
-      t.equal(docs[0].name, 'brian', 'return document with name brian')
-    })
-  })
+  // testFixture.test('field equality in embedded documents', (t) => {
+  //   return jasql.list({
+  //     search: {'jobs[*].city': {$eq: 'Reno'}}
+  //   })
+  //   .then((docs) => {
+  //     t.equal(docs.length, 2, 'returns 2 documents')
+  //     t.equal(docs.map((d) => d.name).indexOf('cody') > -1, true, 'returns 1 document with name cody')
+  //     t.equal(docs.map((d) => d.name).indexOf('brian') > -1, true, 'returns 1 document with name brian')
+  //   })
+  // })
 
-  testFixture.test('and equality implicit', (t) => {
-    return jasql.list({
-      search: {status: 'A', age: 43}
-    })
-    .then((docs) => {
-      t.equal(docs.length, 1, 'returns 1 document')
-      t.equal(docs[0].name, 'brian', 'return document with name brian')
-    })
-  })
+  // testFixture.test('and equality explicit', (t) => {
+  //   return jasql.list({
+  //     search: {$and: [{status: 'A'}, {age: 43}]}
+  //   })
+  //   .then((docs) => {
+  //     t.equal(docs.length, 1, 'returns 1 document')
+  //     t.equal(docs[0].name, 'brian', 'return document with name brian')
+  //   })
+  // })
 
-  testFixture.test('or operator', (t) => {
-    return jasql.list({
-      search: {$or: [{name: 'cody'}, {status: 'B'}]}
-    })
-    .then((docs) => {
-      t.equal(docs.length, 2, 'returns 2 documents')
-      console.log(docs.map((d) => d.name))
-      t.equal(docs.map((d) => d.name).indexOf('cody') > -1, true, 'returns 1 document with name cody')
-      t.equal(docs.map((d) => d.name).indexOf('sarah') > -1, true, 'returns 1 document with name sarah')
-    })
-  })
+  // testFixture.test('and equality implicit', (t) => {
+  //   return jasql.list({
+  //     search: {status: 'A', age: 43}
+  //   })
+  //   .then((docs) => {
+  //     t.equal(docs.length, 1, 'returns 1 document')
+  //     t.equal(docs[0].name, 'brian', 'return document with name brian')
+  //   })
+  // })
 
-  testFixture.test('$lt operator', (t) => {
-    return jasql.list({
-      search: {age: {$lt: 30}}
-    })
-    .then((docs) => {
-      t.equal(docs.length, 1, 'returns 1 document')
-      t.equal(docs[0].name, 'sarah', 'return document with name sarah')
-    })
-  })
+  // testFixture.test('or operator', (t) => {
+  //   return jasql.list({
+  //     search: {$or: [{name: 'cody'}, {status: 'B'}]}
+  //   })
+  //   .then((docs) => {
+  //     t.equal(docs.length, 2, 'returns 2 documents')
+  //     console.log(docs.map((d) => d.name))
+  //     t.equal(docs.map((d) => d.name).indexOf('cody') > -1, true, 'returns 1 document with name cody')
+  //     t.equal(docs.map((d) => d.name).indexOf('sarah') > -1, true, 'returns 1 document with name sarah')
+  //   })
+  // })
 
-  testFixture.test('$gt operator', (t) => {
-    return jasql.list({
-      search: {age: {$gt: 40}}
-    })
-    .then((docs) => {
-      t.equal(docs.length, 1, 'returns 1 document')
-      t.equal(docs[0].name, 'brian', 'return document with name brian')
-    })
-  })
+  // testFixture.test('$lt operator', (t) => {
+  //   return jasql.list({
+  //     search: {age: {$lt: 30}}
+  //   })
+  //   .then((docs) => {
+  //     t.equal(docs.length, 1, 'returns 1 document')
+  //     t.equal(docs[0].name, 'sarah', 'return document with name sarah')
+  //   })
+  // })
 
-  testFixture.test('test array contains value', (t) => {
-    return jasql.list({
-      search: {'tags[*]': 'b'}
-    })
-    .then((docs) => {
-      t.equal(docs.length, 2, 'returns 2 documents')
-      t.equal(docs.map((d) => d.name).indexOf('cody') > -1, true, 'returns 1 document with name cody')
-      t.equal(docs.map((d) => d.name).indexOf('brian') > -1, true, 'returns 1 document with name sarah')
-    })
-  })
+  // testFixture.test('$gt operator', (t) => {
+  //   return jasql.list({
+  //     search: {age: {$gt: 40}}
+  //   })
+  //   .then((docs) => {
+  //     t.equal(docs.length, 1, 'returns 1 document')
+  //     t.equal(docs[0].name, 'brian', 'return document with name brian')
+  //   })
+  // })
+
+  // testFixture.test('test array contains value', (t) => {
+  //   return jasql.list({
+  //     search: {'tags[*]': 'b'}
+  //   })
+  //   .then((docs) => {
+  //     t.equal(docs.length, 2, 'returns 2 documents')
+  //     t.equal(docs.map((d) => d.name).indexOf('cody') > -1, true, 'returns 1 document with name cody')
+  //     t.equal(docs.map((d) => d.name).indexOf('brian') > -1, true, 'returns 1 document with name sarah')
+  //   })
+  // })
 }
