@@ -16,6 +16,7 @@ const DEFAULT_OPTIONS = {
 
 export default class Jasql {
   constructor (opts) {
+    this.initialized = false
     let options = defaults({}, opts, DEFAULT_OPTIONS)
     this.dbOptions = options.db
     this.db = knex(options.db)
@@ -120,6 +121,12 @@ export default class Jasql {
       .destroy()
       .catch(handleDbError)
   }
+
+  // _validateInitialized() {
+  //   if (!this.initialized) {
+  //     throw
+  //   }
+  // }
 
   _rowToDocument (row) {
     if (this._isPostgres()) {
