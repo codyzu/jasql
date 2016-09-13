@@ -69,7 +69,7 @@
     "babel-plugin-transform-async-to-generator": "^6.8.0",
     "babel-preset-es2016-node4": "^6.0.1",
     "babel-register": "^6.9.0",
-    "blue-tape": "^0.2.0",
+    "blue-tape": "^1.0.0",
     "coveralls": "^2.11.9",
     "delete": "^0.3.2",
     "faucet": "0.0.1",
