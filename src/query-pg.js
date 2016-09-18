@@ -79,17 +79,47 @@ class QueryContext {
   }
 
   whereQuery (path, operator, value) {
-    const jsonColumnBinding = this.addBinding(`${this.tableName}.${this.jsonColName}`)
-    const valueBinding = this.addBinding(getOperandValue(value))
+    // const jsonColumnBinding = this.addBinding(`${this.tableName}.${this.jsonColName}`)
 
-    if (path.endsWith('[*]')) {
-      const aliasBinding = this.addBinding(`jsonArray${this.froms.length}`)
-      this.froms.push(`jsonb_array_elements_text(:${jsonColumnBinding}:#>${this._toPgPath(path.slice(0, '[*]'.length * -1))}) as :${aliasBinding}:`)
-      return `:${aliasBinding}: ${operator} :${valueBinding}`
-    } else {
-      const pathAsObject = this._toPgPath(path)
-      return `:${jsonColumnBinding}:${isObject(value) ? '#>' : '#>>'}${pathAsObject} ${operator} :${valueBinding}`
+    const segments = path.split('[*]')
+    console.log({segments})
+    console.log('FROMS:', this.froms)
+    let alias = this.addBinding(`${this.tableName}.${this.jsonColName}`)
+    for (const [index, segment] of segments.entries()) {
+      if (index === 0) {
+
+      }
+      let curAlias = this.addBinding(`jarray${this.froms.length}`)
+      const currPath = segment.startsWith('.') ? segment.slice(1) : segment
+
+      const jsonPathOp = index === segments.length - 1 ? '#>>' : '#>'
+      const from = `jsonb_array_elements_text(:${alias}:${jsonPathOp}${this._toPgPath(currPath)}) as :${curAlias}:`
+      alias = curAlias
+      console.log('seg:', from)
+
+      if (segment.length) {
+        this.froms.push(from)
+      }
+
+      // special handling for last index
+      // if (index === segments.length - 1) {
+      //
+      // } else {
+      //
+      // }
     }
+
+    const valueBinding = this.addBinding(getOperandValue(value))
+    return `:${alias}: ${operator} :${valueBinding}`
+
+    // if (path.endsWith('[*]')) {
+    //   const aliasBinding = this.addBinding(`jsonArray${this.froms.length}`)
+    //   this.froms.push(`jsonb_array_elements_text(:${jsonColumnBinding}:#>${this._toPgPath(path.slice(0, '[*]'.length * -1))}) as :${aliasBinding}:`)
+    //   return `:${aliasBinding}: ${operator} :${valueBinding}`
+    // } else {
+    //   const pathAsObject = this._toPgPath(path)
+    //   return `:${jsonColumnBinding}:${isObject(value) ? '#>' : '#>>'}${pathAsObject} ${operator} :${valueBinding}`
+    // }
   }
 
   _toPgPath (jsonPath) {
@@ -112,6 +142,8 @@ class QueryContext {
   }
 
   addBinding (value) {
+    console.log('BINDING:', value)
+    // console.trace()
     const bindingKey = `param${Object.keys(this.bindings).length}`
     this.bindings[bindingKey] = value
     return bindingKey
