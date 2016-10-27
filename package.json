@@ -89,6 +89,6 @@
   "optionalDependencies": {
     "mysql": "^2.11.1",
     "pg": "^6.0.1",
-    "sqlite3": "^3.1.4"
+    "sqlite3": "^3.1.8"
   }
 }
