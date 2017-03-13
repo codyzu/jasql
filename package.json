@@ -61,7 +61,7 @@
   },
   "homepage": "https://codyzu.github.io/jasql",
   "devDependencies": {
-    "babel-cli": "^6.10.1",
+    "babel-cli": "^6.24.0",
     "babel-core": "^6.10.4",
     "babel-eslint": "^6.1.1",
     "babel-plugin-add-module-exports": "^0.2.1",
