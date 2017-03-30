@@ -70,7 +70,7 @@
     "babel-preset-es2016-node4": "^6.0.1",
     "babel-register": "^6.9.0",
     "blue-tape": "^1.0.0",
-    "coveralls": "^2.11.9",
+    "coveralls": "^2.13.0",
     "delete": "^0.3.2",
     "faucet": "0.0.1",
     "mkdirp-promise": "^3.0.1",
