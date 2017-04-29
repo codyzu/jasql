@@ -82,7 +82,7 @@
     "tape": "^4.6.0"
   },
   "dependencies": {
-    "knex": "^0.12.0",
+    "knex": "^0.13.0",
     "lodash": "^4.13.1",
     "shortid": "^2.2.6"
   },
